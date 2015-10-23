@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FLIF - Free Lossless Image Format</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name=viewport content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="flif-icon.png">
+<link href='https://fonts.googleapis.com/css?family=Lato:400,300,900' rel='stylesheet' type='text/css'>
+<link href='style.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+<h1>
+Animated <a href=".">FLIF</a>
+</h1>
+<p>
+FLIF can also encode animations. This page uses APNG images, if you browser does not support that,
+the images will not move.
+Consider the following animation
+from the <a href="http://people.mozilla.org/~dolske/apng/demo.html">Mozilla Animated PNG demo page</a>:
+</p>
+<p>
+<table>
+<tr>
+<td>
+<img src="example-animation/spinfox.png" class="show_bg">
+</td>
+<td class="left">
+<ul>
+<li><b>2,190,400</b> bytes for uncompressed RGBA</li>
+<li><b>613,321</b> bytes for the original APNG file</li>
+<li><b>602,471</b> bytes for 25 separate PNG files (one per frame)</li>
+<li><b>575,028</b> bytes for APNG with Zopfli compression</li>
+<li><b>411,759</b> bytes for FLIF</li>
+<li><b>407,365</b> bytes for lossless BPG</li>
+<li><b>386,168</b> bytes for FLIF without interlacing</li>
+</ul>
+</td>
+</tr>
+</table>
+</p>
+<p>
+Just like with static images, animated FLIF files can be decoded progressively:
+the entire animation can be shown (at a lower quality) before the entire file is downloaded.
+By contrast, a partial APNG file contains only the first frames, and the entire file has
+to be downloaded before the animation loop is complete.
+</p>
+<table>
+<tr>
+<th>Partially loaded FLIF<br>(58,413 first bytes, 14.2%)</th>
+<th>Partially loaded FLIF<br>(135,429 first bytes, 32.9%)</th>
+<th>Partially loaded FLIF<br>(214,950 first bytes, 52.2%)</th>
+</tr>
+<tr>
+<td><img src="example-animation/spinfox_5.png" class="show_bg"></td>
+<td><img src="example-animation/spinfox_25.png" class="show_bg"></td>
+<td><img src="example-animation/spinfox_50.png" class="show_bg"></td>
+</tr>
+
+<tr>
+<th>Partially loaded APNG<br>(86,254 first bytes, 15%)</th>
+<th>Partially loaded APNG<br>(189,759 first bytes, 33%)</th>
+<th>Partially loaded APNG<br>(304,764 first bytes, 53%)</th>
+</tr>
+<tr>
+<td><img src="example-animation/spinfox_cut15.png" class="show_bg"></td>
+<td><img src="example-animation/spinfox_cut33.png" class="show_bg"></td>
+<td><img src="example-animation/spinfox_cut53.png" class="show_bg"></td>
+</tr>
+
+</table>
+</body>
+</html>
