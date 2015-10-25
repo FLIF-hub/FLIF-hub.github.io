@@ -11,28 +11,22 @@
 
 <body>
 
+
     <h1><a href=".">FLIF</a> by Example</h1>
-    <p>
-        Here is an example that illustrates some of the strengths of
-        <a href=".">FLIF</a>. Consider the following image from
-        <a href="http://pngimg.com/download/1156">pngimg.com</a>. It is a 1969x1307 image
-        with four 8-bit channels (three for RGB color and one for alpha/transparency).
-    </p>
+
+    <p>Here is an example that illustrates some of the strengths of <a href=".">FLIF</a>. Consider the following image from <a href="http://pngimg.com/download/1156">pngimg.com</a>. It is a 1969x1307 image with four 8-bit channels (three for RGB color and one for alpha/transparency).</p>
     <img src="example-images/fish.png" class="show_bg" alt="Example image of a fish" />
 
 
     <h2>Lossless compression</h2>
-    <p>
-        Here are the sizes of this image in various image file formats:
-    </p>
+
+    <p>Here are the sizes of this image in various image file formats:</p>
     <ul>
         <li><strong>10,293,932</strong> bytes for uncompressed RGBA</li>
         <li><strong>693,075</strong> bytes for PNG with Adam7 interlacing</li>
-        <li><strong>657,022</strong> bytes for PNG with Adam7 interlacing after
-            brute-force pngcrush</li>
+        <li><strong>657,022</strong> bytes for PNG with Adam7 interlacing after brute-force pngcrush</li>
         <li><strong>562,214</strong> bytes for JPEG 2000 (lossless)</li>
-        <li><strong>533,004</strong> bytes for the original PNG file as found on
-            <a href="http://pngimg.com/download/1156">pngimg.com</a></li>
+        <li><strong>533,004</strong> bytes for the original PNG file as found on <a href="http://pngimg.com/download/1156">pngimg.com</a></li>
         <li><strong>495,625</strong> bytes for PNG, after brute-force pngcrush</li>
         <li><strong>447,419</strong> bytes for PNG, using PNGOUT</li>
         <li><strong>334,889</strong> bytes for BPG (lossless)</li>
@@ -40,49 +34,26 @@
         <li><strong>299,643</strong> bytes for FLIF</li>
         <li><strong>282,655</strong> bytes for FLIF without interlacing</li>
     </ul>
-    <p>
-        OK, so in lossless compression, FLIF wins (though BPG and WebP are not far behind).
 
-    </p>
+    <p>OK, so in lossless compression, FLIF wins (though BPG and WebP are not far behind).</p>
 
 
     <h2>Lossy compression</h2>
-    <p>
-        What about lossy compression?
-    </p>
+
+    <p>What about lossy compression?</p>
     <ul>
-        <li>WebP, JPEG 2000 and BPG have a lossy mode (in fact that is their default mode),
-            so we can use that to produce smaller files.</li>
-        <li>FLIF does not have a lossy mode, but interlaced files can be decoded
-            progressively so we can simply use something like <code>dd if=lossless.flif
-            of=lossy.flif bs=1024 count=50</code> to produce a lossy file of an arbitrary
-            size (in this case 50 KB).</li>
-        <li>PNG also does not have a lossy mode, but Adam7 interlaced files can be decoded
-            progressively.</li>
+        <li>WebP, JPEG 2000 and BPG have a lossy mode (in fact that is their default mode), so we can use that to produce smaller files.</li>
+        <li>FLIF does not have a lossy mode, but interlaced files can be decoded progressively so we can simply use something like <code>dd if=lossless.flif of=lossy.flif bs=1024 count=50</code> to produce a lossy file of an arbitrary size (in this case 50 KB).</li>
+        <li>PNG also does not have a lossy mode, but Adam7 interlaced files can be decoded progressively.</li>
     </ul>
-    <p>
-        Let us compare the compression artifacts of the different formats. We'll look at
-        partial FLIF and PNG files, and compare with lossy WebP, lossy JPEG 2000, lossy BPG,
-        and the older standard formats GIF and JPEG.
-    </p>
-    <p>
-        Note that what we will be doing is not a fair comparison. It heavily disadvantages
-        FLIF and PNG, because we are looking at different-sized first parts of <strong>one
-        file</strong> (the one that eventually leads to a lossless image), while for the
-        other formats, we look at <strong>multiple files</strong>, each optimized for a
-        specific quality setting.
-    </p>
-    <p>
-        To make it easier to compare the image quality, only part of the images are shown
-        here. You can click on the image to see the full image.
-    </p>
-    <p>
-        The smallest possible file I could produce with existing image formats, was a
-        <a href="example-images/fish-1.jpg">16,977 bytes JPEG file</a> (encoded using the
-        lowest possible quality setting). Obviously, this is extremely lossy: JPEG does not
-        support transparency at all, quantization is extreme, etc. Here are the resulting
-        images at this size:
-    </p>
+
+    <p>Let us compare the compression artifacts of the different formats. We'll look atpartial FLIF and PNG files, and compare with lossy WebP, lossy JPEG 2000, lossy BPG,and the older standard formats GIF and JPEG.</p>
+
+    <p>Note that what we will be doing is not a fair comparison. It heavily disadvantages FLIF and PNG, because we are looking at different-sized first parts of <strong>one file</strong> (the one that eventually leads to a lossless image), while for the other formats, we look at <strong>multiple files</strong>, each optimized for a specific quality setting.</p>
+
+    <p>To make it easier to compare the image quality, only part of the images are shown here. You can click on the image to see the full image.</p>
+
+    <p>The smallest possible file I could produce with existing image formats, was a <a href="example-images/fish-1.jpg">16,977 bytes JPEG file</a> (encoded using the lowest possible quality setting). Obviously, this is extremely lossy: JPEG does not support transparency at all, quantization is extreme, etc. Here are the resulting images at this size:</p>
     <table>
         <tr>
             <th>Original (lossless)</th>
@@ -129,15 +100,9 @@
             </td>
         </tr>
     </table>
-    <p>
-        The winner? In my opinion, BPG looks best here. But keep in mind that this is a
-        completely different BPG file than the lossless BPG file. Also, the BPG encoder
-        is very slow.
-    </p>
-    <p>
-        The smallest WebP file I could produce (using <code>cwebp -q 1 -alpha_q 1 -m
-        6</code>) has a size of 22,702 bytes. Let's take a look:
-    </p>
+    <p>The winner? In my opinion, BPG looks best here. But keep in mind that this is a completely different BPG file than the lossless BPG file. Also, the BPG encoder is very slow.</p>
+
+    <p>The smallest WebP file I could produce (using <code>cwebp -q 1 -alpha_q 1 -m 6</code>) has a size of 22,702 bytes. Let's take a look:</p>
     <table>
         <tr>
             <th>Original (lossless)</th>
@@ -187,11 +152,7 @@
         </td>
         </tr>
     </table>
-    <p>
-        Again, the BPG file looks best. I would say FLIF is second best. Now, let's
-        give WebP some more bytes to work with. With <code>cwebp -q 20 -alpha_q 20 -m
-        6</code>) I got a .webp file with a size of 40,100 bytes.
-    </p>
+    <p>Again, the BPG file looks best. I would say FLIF is second best. Now, let's give WebP some more bytes to work with. With <code>cwebp -q 20 -alpha_q 20 -m 6</code>) I got a .webp file with a size of 40,100 bytes.</p>
     <table>
         <tr>
             <th>Original (lossless)</th>
@@ -234,8 +195,7 @@
                     <img src="example-images/fish-lossy_20_20.webp.png-cropped.png" class="show_bg" alt="Example image of a fish" />
                 </a>
             </td>
-            <td>no JPEG 2000 at this size
-        </td>
+            <td>no JPEG 2000 at this size</td>
             <td>
                 <a href="example-images/fish-36.jpg">
                     <img src="example-images/fish-36.jpg-cropped.png" class="show_bg" alt="Example image of a fish" />
@@ -246,23 +206,15 @@
 
 
     <h2>Progressive decoding</h2>
-    <p>
-        What about progressive decoding of the other lossless formats?
-    </p>
+
+    <p>What about progressive decoding of the other lossless formats?</p>
     <ul>
-        <li>Lossless WebP does not support progressive decoding (it will simply refuse
-            to decode incomplete files).</li>
-        <li>JPEG 2000 supposedly does support progressive decoding but I haven't found
-            a way yet to do that (please help me if you know a way!).</li>
-        <li>BPG makes no claims about progressive decoding, but trying to decode an
-            incomplete file does sometimes work.</li>
+        <li>Lossless WebP does not support progressive decoding (it will simply refuseto decode incomplete files).</li>
+        <li>JPEG 2000 supposedly does support progressive decoding but I haven't founda way yet to do that (please help me if you know a way!).</li>
+        <li>BPG makes no claims about progressive decoding, but trying to decode anincomplete file does sometimes work.</li>
     </ul>
-    <p>
-        BPG is very good at lossy compression, but its lossless files cannot be
-        progressively decoded very well. In this example, <code>bpgdec</code> only
-        wanted to decode the lossless BPG file after about 90,000 bytes were
-        downloaded, and then still only the alpha channel seems to be OK:
-    </p>
+
+    <p>BPG is very good at lossy compression, but its lossless files cannot be progressively decoded very well. In this example, <code>bpgdec</code> only wanted to decode the lossless BPG file after about 90,000 bytes were downloaded, and then still only the alpha channel seems to be OK:</p>
     <table>
         <tr>
             <th>Partially loaded FLIF (90,000 first bytes of a 299,643 byte file)</th>
@@ -281,9 +233,8 @@
             </td>
         </tr>
     </table>
-    <p>
-        Even after 200,000 bytes, the lossless BPG file still looks pretty bad:
-    </p>
+
+    <p>Even after 200,000 bytes, the lossless BPG file still looks pretty bad:</p>
     <table>
         <tr>
             <th>Partially loaded FLIF (200,000 first bytes of a 299,643 byte file)</th>
@@ -302,37 +253,20 @@
             </td>
         </tr>
     </table>
-    <p>
-        WebP does not support progressive decoding at all. JPEG 2000 supposedly does,
-        but I couldn't find any program that can handle partial JPEG 2000 files. So
-        besides FLIF, the only real choice for a progressively downloading lossless
-        format would be PNG with Adam7 interlacing. But in this example, that would be
-        a file that is twice as large. In general, FLIF files are about
-        <a href="https://docs.google.com/spreadsheets/d/16ghJEjf_T7TDTOg2WlelnG1SYCsHng6V-1rxdo78YL8/edit?usp=sharing">39%
-        smaller</a> than PNG files with Adam7 interlacing (even after pngcrushing
-        them).
-    </p>
+
+    <p>WebP does not support progressive decoding at all. JPEG 2000 supposedly does, but I couldn't find any program that can handle partial JPEG 2000 files. So besides FLIF, the only real choice for a progressively downloading lossless format would be PNG with Adam7 interlacing. But in this example, that would be a file that is twice as large. In general, FLIF files are about <a href="https://docs.google.com/spreadsheets/d/16ghJEjf_T7TDTOg2WlelnG1SYCsHng6V-1rxdo78YL8/edit?usp=sharing">39% smaller</a> than PNG files with Adam7 interlacing (even after pngcrushing them).</p>
 
 
     <a name="responsive"></a>
     <h2>Responsive images</h2>
-    <p>
-        The original image is 1969x1307 pixels, which is quite big. Most likely your
-        browser has to scale the image down so it fits the available space:
-    </p>
+
+    <p>The original image is 1969x1307 pixels, which is quite big. Most likely your browser has to scale the image down so it fits the available space:</p>
     <img src="example-images/fish.png" class="show_bg" alt="Example image of a fish" />
-    <p>
-        As said before, the above image can be encoded in FLIF using 299,643 bytes.
-        However, using <code>flif -d -s 2</code>, a downscaled image can be decoded at
-        scale 1:2, which results in the following 653x985 image after reading only the
-        first 80,389 bytes of the file:
-    </p>
+
+    <p>As said before, the above image can be encoded in FLIF using 299,643 bytes. However, using <code>flif -d -s 2</code>, a downscaled image can be decoded at scale 1:2, which results in the following 653x985 image after reading only the first 80,389 bytes of the file:</p>
     <img src="example-images/fish-flif-s2.png" class="show_bg" alt="Example image of a fish" />
-    <p>
-        If scale 1:4 is good enough (e.g. you're viewing the image on a smartphone),
-        then you can get the following 492x326 image from the first 37,014 bytes of the
-        FLIF file:
-    </p>
+
+    <p>If scale 1:4 is good enough (e.g. you're viewing the image on a smartphone), then you can get the following 492x326 image from the first 37,014 bytes of the FLIF file:</p>
     <img src="example-images/fish-flif-s4.png" class="show_bg" alt="Example image of a fish" />
 
 </body>

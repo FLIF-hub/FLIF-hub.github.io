@@ -9,39 +9,31 @@
     <link href='style.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
-    <h1>Animated <a href=".">FLIF</a></h1>
-    <p>
-        FLIF can also encode animations. This page uses APNG images, if you browser does not support that,
-        the images will not move.
-        Consider the following animation
-        from the <a href="http://people.mozilla.org/~dolske/apng/demo.html">Mozilla Animated PNG demo page</a>:
-    </p>
-    <p>
-        <table>
-            <tr>
-                <td>
-                    <img src="example-animation/spinfox.png" class="show_bg" alt="Spinning Firefox logo" />
-                </td>
-                <td class="left">
-                    <ul>
-                        <li><strong>2,190,400</strong> bytes for uncompressed RGBA</li>
-                        <li><strong>613,321</strong> bytes for the original APNG file</li>
-                        <li><strong>602,471</strong> bytes for 25 separate PNG files (one per frame)</li>
-                        <li><strong>575,028</strong> bytes for APNG with Zopfli compression</li>
-                        <li><strong>411,759</strong> bytes for FLIF</li>
-                        <li><strong>407,365</strong> bytes for lossless BPG</li>
-                        <li><strong>386,168</strong> bytes for FLIF without interlacing</li>
-                    </ul>
-                </td>
-            </tr>
-        </table>
-    </p>
-    <p>
-        Just like with static images, animated FLIF files can be decoded progressively:
-        the entire animation can be shown (at a lower quality) before the entire file is downloaded.
-        By contrast, a partial APNG file contains only the first frames, and the entire file has
-        to be downloaded before the animation loop is complete.
-    </p>
+
+
+    <h1>Animated <a href="index.html">FLIF</a></h1>
+
+    <p>FLIF can also encode animations. This page uses APNG images, if you browser does not support that, the images will not move. Consider the following animation from the <a href="http://people.mozilla.org/~dolske/apng/demo.html">Mozilla Animated PNG demo page</a>:</p>
+    <table>
+        <tr>
+            <td>
+                <img src="example-animation/spinfox.png" class="show_bg" alt="Spinning Firefox logo" />
+            </td>
+            <td class="left">
+                <ul>
+                    <li><strong>2,190,400</strong> bytes for uncompressed RGBA</li>
+                    <li><strong>613,321</strong> bytes for the original APNG file</li>
+                    <li><strong>602,471</strong> bytes for 25 separate PNG files (one per frame)</li>
+                    <li><strong>575,028</strong> bytes for APNG with Zopfli compression</li>
+                    <li><strong>411,759</strong> bytes for FLIF</li>
+                    <li><strong>407,365</strong> bytes for lossless BPG</li>
+                    <li><strong>386,168</strong> bytes for FLIF without interlacing</li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    <p>Just like with static images, animated FLIF files can be decoded progressively: the entire animation can be shown (at a lower quality) before the entire file is downloaded. By contrast, a partial APNG file contains only the first frames, and the entire file has to be downloaded before the animation loop is complete. </p>
     <table>
         <tr>
             <th>Partially loaded FLIF<br />(58,413 first bytes, 14.2%)</th>
@@ -65,5 +57,6 @@
             <td><img src="example-animation/spinfox_cut53.png" class="show_bg" alt="Demo image" /></td>
         </tr>
     </table>
+
 </body>
 </html>
