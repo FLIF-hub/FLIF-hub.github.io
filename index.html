@@ -15,7 +15,7 @@
     </div>
 
 
-    <h2>FLIF - Free Lossless Image Format</h2>
+    <h2 id="flif-free-lossless-image-format">FLIF - Free Lossless Image Format</h2>
 
     <p>FLIF is a novel lossless image format which outperforms PNG, lossless WebP, lossless BPG and lossless JPEG2000 in terms of compression ratio.</p>
 
@@ -32,7 +32,7 @@
     <p>Even if the best image format was picked out of PNG, JPEG 2000, WebP or BPG for a given image, depending on the type of image (photograph, line art, etc), <strong>then FLIF still beats that by <em>an average</em> of 10%</strong> in our comparisons.</p>
 
 
-    <h2>Advantages</h2>
+    <h2 id="advantages">Advantages</h2>
 
     <div>
         <p>Here are some of the key advantages of FLIF:</p>
@@ -101,14 +101,14 @@
     </dl>
 
 
-    <h2>Download</h2>
+    <h2 id="download">Download</h2>
 
     <p><strong>WARNING:</strong> FLIF is a work in progress. The format is not finalized yet. Any small or large change in the algorithm will most likely mean that FLIF files encoded with an older version will no longer be correctly decoded by a newer version. Keep this in mind.</p>
 
     <p><a href="https://github.com/FLIF-hub/FLIF">FLIF source code</a></p>
 
 
-    <h2>Features</h2>
+    <h2 id="features">Features</h2>
 
     <p>FLIF currently has the following features:</p>
     <ul>
@@ -123,7 +123,7 @@
     </ul>
 
 
-    <h2>TODO list</h2>
+    <h2 id="todo-list">TODO list</h2>
 
     <p>FLIF does not yet support the following features:</p>
     <ul>
@@ -135,7 +135,7 @@
     </ul>
 
 
-    <h2>Technical information</h2>
+    <h2 id="technical-information">Technical information</h2>
 
     <p>FLIF is based on MANIAC compression. MANIAC (Meta-Adaptive Near-zero Integer Arithmetic Coding) is an algorithm for entropy coding developed by Jon Sneyers and Pieter Wuille. It is a variant of <a href="https://en.wikipedia.org/wiki/Context-adaptive_binary_arithmetic_coding">CABAC (context-adaptive binary arithmetic coding)</a>, where instead of using a multi-dimensional array of quantized local image information, the contexts are nodes of decision trees which are dynamically learned at encode time. This means a much more image-specific context model can be used, resulting in better compression.</p>
 

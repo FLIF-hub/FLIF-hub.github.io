@@ -12,26 +12,26 @@
 <body>
 
 
-    <h1><a href=".">FLIF</a> and Responsive Web Design</h1>
+    <h1 id="flif-and-responsive-web-design"><a href="/index.html">FLIF</a> and Responsive Web Design</h1>
 
     <p><a href="https://en.wikipedia.org/wiki/Responsive_web_design">Responsive web design</a> is a hot topic, and that is not surprising: websites are viewed on a much larger variety of devices than ever before. Smartphones, tablets, laptops, desktop computers, smart TVs, smart watches, and so on. HTML5 and CSS3 help a lot to make responsive web design possible. There are some remaining issues though. One of the biggest problems is how to deal with images in a responsive design.</p>
 
 
-    <h2>State of the art</h2>
+    <h2 id="state-of-the-art">State of the art</h2>
 
     <p>Typical approaches are to create different variations of the same image (i.e. downscaled to different resolutions and/or lossy encoded at different quality settings) and provide them as separate files. Then the goal is to let the software client load the most fitting file for a situation, while avoiding problems like downloading multiple variations of the same image, content delivery networks caching issues, race conditions, browser preloading issues, and so on. The net result can be that the website actually loads slower instead of faster.</p>
 
     <p>Even if all goes well, there is a significant overhead at the server side since multiple variations of the same image have to be created and cached. Also it may be necessary for the client to download multiple variations of the same image, e.g. when the user wants to zoom in on a page to see more detail.</p>
 
 
-    <h2>FLIF: one file per image</h2>
+    <h2 id="flif-one-file-per-image">FLIF: one file per image</h2>
 
     <p>With FLIF, this is not necessary, and for every image, only one file is required, ever. The optimization can happen entirely on the client side.</p>
 
     <p>A FLIF image can be loaded in <a href="example.html#responsive">different &lsquo;variations&rsquo;</a> from the same source file, by loading the file only partially. This makes it a very appropriate file format for responsive web design. Since there is only one file, the browser can start downloading the beginning of that file immediately, even before it knows exactly how much detail will be needed. The download or file read operations can be stopped as soon as sufficient detail is available, and if needed, it can be resumed when for whatever reason more detail is needed &mdash; e.g. the user zooms in or decides to print the page.</p>
 
 
-    <h2>Client side knows best</h2>
+    <h2 id="client-side-knows-best">Client side knows best</h2>
 
     <p>Using FLIF, software clients (web browsers, image viewers, ...) can more effectively use resources such as bandwidth or memory, by limiting the loading of files in consideration of the circumstances of the situation. After all, it is the client side that knows best what those circumstances are. For example:</p>
     <ul>
@@ -45,7 +45,7 @@
     </ul>
 
 
-    <h2>No pixel needs to be encoded twice</h2>
+    <h2 id="no-pixel-needs-to-be-encoded-twice">No pixel needs to be encoded twice</h2>
 
     <p>Only one file is ever required per image, and that can make everything much easier. For example, a typical image gallery could use the same file everywhere: thumbnails, previews, multiple scaled-down versions, and the original files, it could all be the same file. No pixel has to be encoded more than once.</p>
 
