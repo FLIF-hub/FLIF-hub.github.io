@@ -15,8 +15,8 @@ body
     width: 100%
     background-color: #FFF
     border: 0px
-    margin: 1em 5vw 20vh 5vw
-    padding: 0px
+    margin: 0px
+    padding: 1em 5vw 20vh 5vw
     color: #000
     font-family: 'Lato', sans-serif
 
@@ -44,23 +44,33 @@ h2
     font-size: 30pt
     font-weight: 300
 
-p
+p,
+iframe
     max-width: 40em
     margin: 0.5em 0em 1em 0em
     padding-left: 30px
     line-height: 1.2em
     text-align: justify
 
+th
+    font-weight: bold
+
 td
+    padding-top: 4px
+    padding-right: 4px
     text-align: center
+    vertical-align: middle
     &.left
         text-align: left
 
 ul,
 ol
-    max-width: 40em
+    max-width: 45em
     padding-left: 60px
     margin-bottom: 1em
+
+ol
+    list-style-type: decimal
 
 ul
     list-style-type: disc
@@ -95,13 +105,16 @@ img
     max-width: 100%
     -ms-interpolation-mode: bicubic
     &.show_bg
-        background-image: url("checkered.png")
+        background-image: url("/_img/checkered.png")
+
+.logo
+    max-height: 20vh
 
 .small_images
     margin: 0px
     padding: 0px
     img
-        max-width: 32%
+        max-width: 28.75%
 
 #container
     max-width: 20em
