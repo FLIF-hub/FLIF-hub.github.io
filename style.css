@@ -1,92 +1,111 @@
 body {
-  background-color: #ffffff;
-  color: #000000;
-  font-family: 'Lato', sans-serif;
-  margin-left: 5vw;
-  margin-right: 5vw;
-  margin-top: 1em;
-  margin-bottom: 20vh;
+    background-color: #FFF;
+    color: #000;
+    font-family: 'Lato', sans-serif;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    margin-top: 1em;
+    margin-bottom: 20vh;
 }
+
 h1 {
-  margin: 0;
-  padding: 0;
-  color: #ddbbbb;
-  font-weight: 900;
-  font-size: 60pt;
-  font-size: 5vw;
+    margin: 0px;
+    padding: 0px;
+    color: #DBB;
+    font-weight: 900;
+    font-size: 60pt;
+    font-size: 5vw;
 }
+
 h2 {
-  margin-bottom: 0.5em;
-  margin-top: 1em;
-  color: #881111;
-  background: #eeeeee;
-  border-bottom: 2px solid #cccccc;
-  border-left:  2px solid #cccccc;
-  border-radius: 10px;
-  padding-left: 10px;
-  font-weight: 300;
-  font-size: 30pt;
-  max-width: 20em;
+    margin-bottom: 0.5em;
+    margin-top: 1em;
+    color: #811;
+    background: #EEE;
+    border-bottom: 2px solid #CCC;
+    border-left:  2px solid #CCC;
+    border-radius: 10px;
+    padding-left: 10px;
+    font-weight: 300;
+    font-size: 30pt;
+    max-width: 20em;
 }
+
 p {
-  text-align: justify;
-  max-width: 40em;
-  padding-left: 30px;
-  margin-top: 0.5em;
+    text-align: justify;
+    max-width: 40em;
+    padding-left: 30px;
+    margin-top: 0.5em;
 }
-ul, ol {
-  padding-left: 60px;
-  max-width: 40em;
+
+ul,
+ol {
+    padding-left: 60px;
+    max-width: 40em;
 }
+
 dt {
-  color: #555555;
-  font-weight: 900;
-  padding-left: 30px;
-  margin-top: 1em;
-  margin-bottom: 0;
-  font-weight: 900;
-  font-size: 20pt;
+    color: #555;
+    font-weight: 900;
+    padding-left: 30px;
+    margin-top: 1em;
+    margin-bottom: 0;
+    font-weight: 900;
+    font-size: 20pt;
 }
+
 dd {
-  max-width: 40em;
+    max-width: 40em;
 }
+
 img {
-  max-width: 100%;
+    max-width: 100%;
 }
+
 img.show_bg {
-  background-image: url("checkered.png");
+    background-image: url("checkered.png");
 }
+
 a img.show_bg:hover {
-  background-image: none;
-  background: #881111;
+    background-image: none;
+    background: #881111;
 }
+
 .small_images {
-  margin: 0;
-  padding: 0;
+    margin: 0px;
+    padding: 0px;
 }
+
 .small_images img {
-  max-width: 32%;
+    max-width: 32%;
 }
+
 a {
-  color: #881111;
+    color: #811;
 }
+
 h1 a {
-  text-decoration: none;
-  color: #cc7777;
+    text-decoration: none;
+    color: #C77;
 }
+
 a:hover {
-  background: #881111;
-  color: #ffffaa;
-  text-decoration: none;
+    background: #881111;
+    color: #ffffaa;
+    text-decoration: none;
 }
+
 #container {
-  max-width: 20em;
-  font-weight: 300;
-  font-size: 30pt;
+    max-width: 20em;
+    font-weight: 300;
+    font-size: 30pt;
+    text-align: center;
 }
+
 td {
-  text-align: center;
+    text-align: center;
 }
+
 td.left {
-  text-align: left;
+    text-align: left;
 }
