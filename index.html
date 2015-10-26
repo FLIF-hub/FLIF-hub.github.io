@@ -1,203 +1,177 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>FLIF - Free Lossless Image Format</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name=viewport content="width=device-width, initial-scale=1">
-<link rel="shortcut icon" href="flif-icon.png">
-<link href='https://fonts.googleapis.com/css?family=Lato:400,300,900' rel='stylesheet' type='text/css'>
-<link href='style.css' rel='stylesheet' type='text/css'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />     <!-- Must be first item in <head> -->
+    <title>FLIF - Free Lossless Image Format</title>
+    <meta charset="UTF-8"                                                                                   />
+    <meta http-equiv="Content-Type"              content="text/html;charset=utf-8"                          />
+    <meta http-equiv="cleartype"                 content="on"                                               />
+    <meta name="description"                     content="Official website for the FLIF image format" />
+    <meta name="keywords"                        content="FLIF, Free Lossless Image Format, compression, responsive, lossy, animation, png alternative, bpg, jpg, webm, webp, jpeg 2000, gif, apng, Adam 7" />
+    <meta http-equiv="Expires"                   content="0"                                                />
+    <meta name="viewport"                        content="width=device-width, initial-scale=1.0"            />
+    <meta name="subject"                         content="Image Format"                                     />
+    <meta name="language"                        content="EN"                                               />
+    <meta name="robots"                          content="index,follow"                                     />
+    <meta name="rating"                          content="General"                                          />
+    <meta name="HandheldFriendly"                content="True"                                             />
+    <meta name="application-name"                content="FLIF"                                             />
+    <meta name="msapplication-navbutton-color"   content="#FFFFFF"                                          />
+    <meta name="msapplication-TileColor"         content="#FFFFFF"                                          />
+    <meta name="msapplication-square70x70logo"   content="/_img/meta/mstile01sm.png"                        />
+    <meta name="msapplication-square150x150logo" content="/_img/meta/mstile02md.png"                        />
+    <meta name="msapplication-wide310x150logo"   content="/_img/meta/mstile03wd.png"                        />
+    <meta name="msapplication-square310x310logo" content="/_img/meta/mstile04lg.png"                        />
+    <meta name="apple-mobile-web-app-title"      content="FLIF"                                             />
+    <meta name="apple-mobile-web-app-capable"    content="no"     /> <!-- "yes" hides Safari navbar in iOS -->
+    <meta name="apple-touch-fullscreen"          content="no"                                               />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"                                      />
+    <link rel="apple-touch-icon"             href="/_img/meta/apl-57.png"  type="image/png" sizes="57x57"    />
+    <link rel="apple-touch-icon-precomposed" href="/_img/meta/apl-57.png"  type="image/png" sizes="57x57"    />
+    <link rel="apple-touch-icon"             href="/_img/meta/apl-72.png"  type="image/png" sizes="72x72"    />
+    <link rel="apple-touch-icon-precomposed" href="/_img/meta/apl-72.png"  type="image/png" sizes="72x72"    />
+    <link rel="apple-touch-icon"             href="/_img/meta/apl-114.png" type="image/png" sizes="114x114"  />
+    <link rel="apple-touch-icon-precomposed" href="/_img/meta/apl-114.png" type="image/png" sizes="114x114"  />
+    <link rel="apple-touch-icon"             href="/_img/meta/apl-144.png" type="image/png" sizes="144x144"  />
+    <link rel="apple-touch-icon-precomposed" href="/_img/meta/apl-144.png" type="image/png" sizes="144x144"  />
+    <link rel="apple-touch-startup-image"    href="/_img/meta/apl-str.png" type="image/png"                  />
+    <link rel="fluid-icon"                   href="/_img/meta/fluid.png"   type="image/png"                  />
+    <link rel="icon"                         href="/favicon.ico"           type="image/x-icon"               />
+    <link rel="shortcut icon"                href="/favicon.ico"           type="image/ico"                  />
+    <link rel="stylesheet"                   href="/_style/style.css"      type="text/css"                   />
 </head>
 
 <body>
-<div id="container">
-<center>
-<img src="flif.png" alt="FLIF" style="max-height: 20vh;">
-</center>
-</div>
-<h2>
-FLIF - Free Lossless Image Format</h2>
-<p>
-FLIF is a novel lossless image format which outperforms PNG, lossless WebP, lossless BPG and lossless JPEG2000 in terms of compression ratio.
-</p>
-<p>
-According to the
-<a href="https://docs.google.com/spreadsheets/d/16ghJEjf_T7TDTOg2WlelnG1SYCsHng6V-1rxdo78YL8/edit?usp=sharing">compression experiments we have performed</a>,
-FLIF files are, on average:
-<ul>
-<li>26% smaller than brute-force crushed PNG files,
-</li><li>35% smaller than typical PNG files,
-</li><li>37% smaller than lossless JPEG 2000 compression,
-</li><li>15% smaller than lossless <a href="https://developers.google.com/speed/webp/">WebP</a>,
-</li><li>22% smaller than lossless <a href="http://bellard.org/bpg/">BPG</a>.
-</li></ul>
-<p>
-Even if the best image format was picked out of PNG, JPEG 2000, WebP or BPG for a given image,
-depending on the type of image (photograph, line art, etc),
-<b>then FLIF still beats that by <i>an average</i> of 10%</b> in our comparisons.
-</p>
-
-<h2>Advantages</h2>
-<p>
-Here are some of the key advantages of FLIF:
-<dl>
-<dt>Best compression</dt>
-<dd>
-<p>
-The results of a compression test similar to the
-<a href="https://developers.google.com/speed/webp/docs/webp_lossless_alpha_study#results">WebP study</a>
-are shown below. FLIF clearly beats other image compression algorithms.
-</p>
-<a href="comparison.png"><img src="comparison.png"></a>
-</dd>
-<dt>Works on any kind of image</dt>
-<dd>
-<p>
-FLIF does away with knowing what image format performs the best at any given task.
-</p><p>
-You are supposed to know that PNG works well for line art, but not for photographs.
-For regular photographs where some quality loss is acceptable, JPEG can be used,
-but for medical images you may want to use lossless JPEG 2000. And so on. It can be tricky for non-technical end-users.
-</p><p>
-More recent formats like
-<a href="https://developers.google.com/speed/webp/">WebP</a> and <a href="http://bellard.org/bpg/">BPG</a>
-do not solve this problem, since they still have their strengths and weaknesses.
-</p>
-<p>
-<b>FLIF works well on any kind of image, so the end-user does not need to try different algorithms and parameters.</b>
-<a href="https://docs.google.com/spreadsheets/d/16ghJEjf_T7TDTOg2WlelnG1SYCsHng6V-1rxdo78YL8/edit?usp=sharing">Here is a selection of
-different kinds of images and how each image format performs with them</a>.
-The conclusion? FLIF beats anything else <b>in all categories</b>.
-</p>
-<p>
-Here is an example to illustrate the point.
-On photographs, PNG performs poorly while WebP, BPG and JPEG 2000 compress well (see plot on the left).
-On medical images, PNG and WebP perform relatively poorly (note: it looks like the most recent development version of WebP performs a lot better!) while BPG and JPEG 2000 work well (see middle plot).
-On geographical maps, BPG and JPEG 2000 perform (extremely) poorly while while PNG and WebP work well (see plot on the right).
-In each of these three examples, FLIF performs well &mdash; even better than any of the others.
-</dd>
-</dl>
-<div class="small_images">
-<a href="compression-kodak.png"><img src="compression-kodak.png"></a>
-<a href="compression-lukas_medical.png"><img src="compression-lukas_medical.png"></a>
-<a href="compression-maps.png"><img src="compression-maps.png"></a>
-</div>
+    <div id="container">
+        <img src="/_img/flif.png" alt="FLIF logo" class="logo" />
+    </div>
 
 
-<dl>
+    <h2 id="flif-free-lossless-image-format">FLIF - Free Lossless Image Format</h2>
 
-<dt>Progressive and lossless</dt>
-<dd>
-<p>
-FLIF is lossless, but can still be used in low-bandwidth situations, since only the first part of a file is needed for
-a reasonable preview of the image.
-</p><p>
-Other lossless formats also support progressive decoding (e.g. PNG with Adam7 interlacing), but FLIF is better at it.
-Here is a simple demonstration video, which shows an image as it is slowly being downloaded:
-</p>
-<iframe width="640" height="360" src="https://www.youtube-nocookie.com/embed/ByH7RMsMxBY?rel=0" frameborder="0" allowfullscreen style="max-width:100%">
-<a href="https://www.youtube.com/watch?v=ByH7RMsMxBY">PNG Adam7 vs FLIF</a>
-</iframe>
-<p>
-Lossy compression is useful when network bandwidth or diskspace are limited, and you still want to get a visually OK image.
-The disadvantages of lossy compression are obvious: information is lost forever, compression artifacts can be noticeable,
-and transcoding or editing can cause <a href="https://en.wikipedia.org/wiki/Generation_loss">generation loss</a>.
-With better compression, the need to go there is lessened.
-</p>
-<p>
-<a href="example.html">Here is an example</a> to illustrate the progressive decoding of FLIF, compared to other methods.
-</p>
-</dd>
-<dt>Responsive by design</dt>
-<dd>
-<p>
-<p>
-A FLIF image can be loaded in different &lsquo;variations&rsquo; from the same source file, by loading the file only partially.
-This makes it a very appropriate file format for responsive web design.
-</p>
-<p><a href="responsive.html">Read more about FLIF and Responsive Web Design</a>
-</p>
-<p>Try the <a href="https://uprootlabs.github.io/poly-flif/">Poly-FLIF interactive demo</a> by <a href="https://github.com/hrj">hrj</a>!</p>
-</dd>
-<dt>No patents, Free</dt>
-<dd>
-<p>
-Unlike some other image formats (e.g. BPG and JPEG 2000), FLIF is completely royalty-free and it is not encumbered by software patents.
-</p>
-<p>
-FLIF is <a href="http://fsfe.org/about/basics/freesoftware.en.html">Free Software</a>.
-It is released under the GNU General Public License (GPL) version 3 or any later version.
-That means you get the &ldquo;four freedoms&rdquo;:
-</p>
-<ol>
-<li>The freedom to run the program, for any purpose.</li>
-<li>The freedom to study how the program works, and adapt it to your needs.</li>
-<li>The freedom to redistribute copies.</li>
-<li>The freedom to improve the program, and release your improvements to the public, so that the whole community benefits.</li>
-</ol>
-<p>
-Moreover, FLIF is free of charge (gratis).
-</p>
-</dd>
-</dl>
-</p>
+    <p>FLIF is a novel lossless image format which outperforms PNG, lossless WebP, lossless BPG and lossless JPEG2000 in terms of compression ratio.</p>
 
-<h2>Download</h2>
-<p>
-WARNING: FLIF is a work in progress. The format is not finalized yet. Any small or large change in the algorithm will most likely
-mean that FLIF files encoded with an older version will no longer be correctly decoded by a newer version. Keep this in mind.
-</p>
-<p>
-<a href="https://github.com/FLIF-hub/FLIF">FLIF source code</a>
-</p>
+    <p>According to the <a href="https://docs.google.com/spreadsheets/d/16ghJEjf_T7TDTOg2WlelnG1SYCsHng6V-1rxdo78YL8/edit?usp=sharing">compression experiments we have performed</a>, FLIF files are, on average:</p>
+
+    <ul>
+        <li>26% smaller than brute-force crushed PNG files,</li>
+        <li>35% smaller than typical PNG files,</li>
+        <li>37% smaller than lossless JPEG 2000 compression,</li>
+        <li>15% smaller than lossless <a href="https://developers.google.com/speed/webp/">WebP</a>,</li>
+        <li>22% smaller than lossless <a href="http://bellard.org/bpg/">BPG</a>.</li>
+    </ul>
+
+    <p>Even if the best image format was picked out of PNG, JPEG 2000, WebP or BPG for a given image, depending on the type of image (photograph, line art, etc), <strong>then FLIF still beats that by <em>an average</em> of 10%</strong> in our comparisons.</p>
 
 
-<h2>Features</h2>
-<p>
-FLIF currently has the following features:
-</p>
-<ul>
-<li>Lossless compression</li>
-<li>Greyscale, RGB, RGBA</li>
-<li>Color depth: up to 16 bits per channel (high dynamic range)</li>
-<li>Interlaced (default) or non-interlaced</li>
-<li>Interlaced files can be decoded quickly at lower quality/resolution (<a href="responsive.html">&ldquo;Responsive By Design&rdquo;</a>)</li>
-<li><a href="example.html">Progressive decoding</a> of partially downloaded files</li>
-<li><a href="animation.html">Animation support</a></li>
-<li>Encoding and decoding speeds are not blazingly fast, but they are in the right ballpark</li>
-</ul>
+    <h2 id="advantages">Advantages</h2>
+
+    <div>
+        <p>Here are some of the key advantages of FLIF:</p>
+        <dl>
+            <dt>Best compression</dt>
+            <dd>
+                <p>The results of a compression test similar to the <a href="https://developers.google.com/speed/webp/docs/webp_lossless_alpha_study#results">WebP study</a> are shown below. FLIF clearly beats other image compression algorithms.</p>
+                <a href="comparison.png" class="img"><img src="/_img/comparison.png" alt="Chart comparing FLIF to alternatives."></a>
+            </dd>
+            <dt>Works on any kind of image</dt>
+            <dd>
+                <p>FLIF does away with knowing what image format performs the best at any given task.</p>
+
+                <p>You are supposed to know that PNG works well for line art, but not for photographs. For regular photographs where some quality loss is acceptable, JPEG can be used, but for medical images you may want to use lossless JPEG 2000. And so on. It can be tricky for non-technical end-users.</p>
+
+                <p>More recent formats like <a href="https://developers.google.com/speed/webp/">WebP</a> and <a href="http://bellard.org/bpg/">BPG</a> do not solve this problem, since they still have their strengths and weaknesses.</p>
+
+                <p><strong>FLIF works well on any kind of image, so the end-user does not need to try different algorithms and parameters.</strong> <a href="https://docs.google.com/spreadsheets/d/16ghJEjf_T7TDTOg2WlelnG1SYCsHng6V-1rxdo78YL8/edit?usp=sharing">Here is a selection of different kinds of images and how each image format performs with them</a>. The conclusion? FLIF beats anything else <strong>in all categories</strong>.</p>
+
+                <p>Here is an example to illustrate the point. On photographs, PNG performs poorly while WebP, BPG and JPEG 2000 compress well (see plot on the left). On medical images, PNG and WebP perform relatively poorly (note: it looks like the most recent development version of WebP performs a lot better!) while BPG and JPEG 2000 work well (see middle plot). On geographical maps, BPG and JPEG 2000 perform (extremely) poorly while while PNG and WebP work well (see plot on the right). In each of these three examples, FLIF performs well &mdash; even better than any of the others.</p>
+            </dd>
+        </dl>
+    </div>
+
+    <div class="small_images">
+        <a href="/_img/compression-kodak.png" class="img"><img src="/_img/compression-kodak.png" alt="Chart showing a comparison of FLIF to alternatives against the Kodak Suite" /></a>
+        <a href="/_img/compression-lukas_medical.png" class="img"><img src="/_img/compression-lukas_medical.png" alt="Chart showing a comparison of FLIF to alternatives against the Lukas 2D Medical Images Suite"></a>
+        <a href="/_img/compression-maps.png" class="img"><img src="/_img/compression-maps.png" alt="Chart showing a comparison of FLIF to alternatives against a set of geographical maps" /></a>
+    </div>
+
+    <dl>
+        <dt>Progressive and lossless</dt>
+        <dd>
+            <p>FLIF is lossless, but can still be used in low-bandwidth situations, since only the first part of a file is needed for a reasonable preview of the image.</p>
+
+            <p>Other lossless formats also support progressive decoding (e.g. PNG with Adam7 interlacing), but FLIF is better at it. Here is a simple demonstration video, which shows an image as it is slowly being downloaded:</p>
+
+            <iframe width="640" height="360" src="https://www.youtube-nocookie.com/embed/ByH7RMsMxBY?rel=0" frameborder="0" allowfullscreen style="max-width:100%">
+                <a href="https://www.youtube.com/watch?v=ByH7RMsMxBY">PNG Adam7 vs FLIF</a>
+            </iframe>
+
+            <p>Lossy compression is useful when network bandwidth or diskspace are limited, and you still want to get a visually OK image. The disadvantages of lossy compression are obvious: information is lost forever, compression artifacts can be noticeable, and transcoding or editing can cause <a href="https://en.wikipedia.org/wiki/Generation_loss">generation loss</a>. With better compression, the need to go there is lessened.</p>
+
+            <p><a href="/example.html">Here is an example</a> to illustrate the progressive decoding of FLIF, compared to other methods.</p>
+        </dd>
+
+        <dt>Responsive by design</dt>
+        <dd>
+            <p>A FLIF image can be loaded in different &lsquo;variations&rsquo; from the same source file, by loading the file only partially. This makes it a very appropriate file format for responsive web design.</p>
+            <p><a href="/responsive.html">Read more about FLIF and Responsive Web Design</a></p>
+            <p>Try the <a href="https://uprootlabs.github.io/poly-flif/">Poly-FLIF interactive demo</a> by <a href="https://github.com/hrj">hrj</a>!</p>
+        </dd>
+
+        <dt>No patents, Free</dt>
+        <dd>
+            <p>Unlike some other image formats (e.g. BPG and JPEG 2000), FLIF is completely royalty-free and it is not encumbered by software patents.</p>
+            <p>FLIF is <a href="http://fsfe.org/about/basics/freesoftware.en.html">Free Software</a>. It is released under the GNU General Public License (GPL) version 3 or any later version. That means you get the &ldquo;four freedoms&rdquo;:</p>
+            <ol>
+                <li>The freedom to run the program, for any purpose.</li>
+                <li>The freedom to study how the program works, and adapt it to your needs.</li>
+                <li>The freedom to redistribute copies.</li>
+                <li>The freedom to improve the program, and release your improvements to the public, so that the whole community benefits.</li>
+            </ol>
+            <p>Moreover, FLIF is free of charge (gratis).</p>
+        </dd>
+    </dl>
 
 
-<h2>TODO list</h2>
-<p>
-FLIF does not yet support the following features:
-</p>
-<ul>
-<li>Metadata (EXIF, ICC profiles, XMP, ...)</li>
-<li>Other color spaces (CMYK, YCbCr, ...)</li>
-<li>Lossy compression</li>
-<li>Web browser support</li>
-<li>A highly optimized implementation</li>
-</ul>
+    <h2 id="download">Download</h2>
+
+    <p><strong>WARNING:</strong> FLIF is a work in progress. The format is not finalized yet. Any small or large change in the algorithm will most likely mean that FLIF files encoded with an older version will no longer be correctly decoded by a newer version. Keep this in mind.</p>
+
+    <p><a href="https://github.com/FLIF-hub/FLIF">FLIF source code</a></p>
 
 
-<h2>Technical information</h2>
-<p>
-FLIF is based on MANIAC compression.
-MANIAC (Meta-Adaptive Near-zero Integer Arithmetic Coding) is an algorithm for entropy coding developed by Jon Sneyers and Pieter Wuille.
-It is a variant of <a href="https://en.wikipedia.org/wiki/Context-adaptive_binary_arithmetic_coding">CABAC (context-adaptive binary arithmetic coding)</a>,
-where instead of using a multi-dimensional array of quantized
-local image information, the contexts are nodes of decision trees which are dynamically learned at encode time.
-This means a much more image-specific context model can be used, resulting in better compression.
-</p>
-<p>
-Moreover, FLIF supports a form of progressive interlacing (essentially a generalization/improvement of PNG&apos;s
-<a href="https://en.wikipedia.org/wiki/Adam7_algorithm">Adam7 interlacing</a>) which means that any prefix
-(e.g. partial download) of a compressed file can be used as a reasonable lossy encoding of the entire image.
-In contrast to other interlacing image formats (e.g. PNG or GIF), interlaced FLIF encoding takes the interlacing into account in the pixel estimation and in the MANIAC context model.
-As a result, the overhead of interlacing is small, and in some cases (e.g. photographs) interlaced FLIF files are even smaller than non-interlaced ones.
-</p>
+    <h2 id="features">Features</h2>
 
+    <p>FLIF currently has the following features:</p>
+    <ul>
+        <li>Lossless compression</li>
+        <li>Greyscale, RGB, RGBA</li>
+        <li>Color depth: up to 16 bits per channel (high dynamic range)</li>
+        <li>Interlaced (default) or non-interlaced</li>
+        <li>Interlaced files can be decoded quickly at lower quality/resolution (<a href="/responsive.html">&ldquo;Responsive By Design&rdquo;</a>)</li>
+        <li><a href="/example.html">Progressive decoding</a> of partially downloaded files</li>
+        <li><a href="/animation.html">Animation support</a></li>
+        <li>Encoding and decoding speeds are not blazingly fast, but they are in the right ballpark</li>
+    </ul>
+
+
+    <h2 id="todo-list">TODO list</h2>
+
+    <p>FLIF does not yet support the following features:</p>
+    <ul>
+        <li>Metadata (EXIF, ICC profiles, XMP, ...)</li>
+        <li>Other color spaces (CMYK, YCbCr, ...)</li>
+        <li>Lossy compression</li>
+        <li>Web browser support</li>
+        <li>A highly optimized implementation</li>
+    </ul>
+
+
+    <h2 id="technical-information">Technical information</h2>
+
+    <p>FLIF is based on MANIAC compression. MANIAC (Meta-Adaptive Near-zero Integer Arithmetic Coding) is an algorithm for entropy coding developed by Jon Sneyers and Pieter Wuille. It is a variant of <a href="https://en.wikipedia.org/wiki/Context-adaptive_binary_arithmetic_coding">CABAC (context-adaptive binary arithmetic coding)</a>, where instead of using a multi-dimensional array of quantized local image information, the contexts are nodes of decision trees which are dynamically learned at encode time. This means a much more image-specific context model can be used, resulting in better compression.</p>
+
+    <p>Moreover, FLIF supports a form of progressive interlacing (essentially a generalization/improvement of PNG&apos;s <a href="https://en.wikipedia.org/wiki/Adam7_algorithm">Adam7 interlacing</a>) which means that any prefix (e.g. partial download) of a compressed file can be used as a reasonable lossy encoding of the entire image. In contrast to other interlacing image formats (e.g. PNG or GIF), interlaced FLIF encoding takes the interlacing into account in the pixel estimation and in the MANIAC context model. As a result, the overhead of interlacing is small, and in some cases (e.g. photographs) interlaced FLIF files are even smaller than non-interlaced ones.</p>
 
 </body>
 </html>

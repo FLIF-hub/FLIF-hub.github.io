@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />     <!-- Must be first item in <head> -->
+    <script src="/_scripts/router.js"></script>   <!-- Goes up top to forward if a good URL is found ASAP. -->
     <title>FLIF - Free Lossless Image Format</title>
     <meta charset="UTF-8"                                                                                   />
     <meta http-equiv="Content-Type"              content="text/html;charset=utf-8"                          />
@@ -40,53 +41,10 @@
     <link rel="shortcut icon"                href="/favicon.ico"           type="image/ico"                  />
     <link rel="stylesheet"                   href="/_style/style.css"      type="text/css"                   />
 </head>
-<body>
-
-
-    <h1 id="animated-flif">Animated <a href="/index.html">FLIF</a></h1>
-
-    <p>FLIF can also encode animations. This page uses APNG images, if you browser does not support that, the images will not move. Consider the following animation from the <a href="http://people.mozilla.org/~dolske/apng/demo.html">Mozilla Animated PNG demo page</a>:</p>
-    <table>
-        <tr>
-            <td><img src="/example-animation/spinfox.png" class="show_bg" alt="Spinning Firefox logo" /></td>
-            <td class="left">
-                <ul>
-                    <li><strong>2,190,400</strong> bytes for uncompressed RGBA</li>
-                    <li><strong>613,321</strong> bytes for the original APNG file</li>
-                    <li><strong>602,471</strong> bytes for 25 separate PNG files (one per frame)</li>
-                    <li><strong>575,028</strong> bytes for APNG with Zopfli compression</li>
-                    <li><strong>411,759</strong> bytes for FLIF</li>
-                    <li><strong>407,365</strong> bytes for lossless BPG</li>
-                    <li><strong>386,168</strong> bytes for FLIF without interlacing</li>
-                </ul>
-            </td>
-        </tr>
-    </table>
-
-    <p>Just like with static images, animated FLIF files can be decoded progressively: the entire animation can be shown (at a lower quality) before the entire file is downloaded. By contrast, a partial APNG file contains only the first frames, and the entire file has to be downloaded before the animation loop is complete. </p>
-    <table>
-        <tr>
-            <th>Partially loaded FLIF<br />(58,413 first bytes, 14.2%)</th>
-            <th>Partially loaded FLIF<br />(135,429 first bytes, 32.9%)</th>
-            <th>Partially loaded FLIF<br />(214,950 first bytes, 52.2%)</th>
-        </tr>
-        <tr>
-            <td><img src="/example-animation/spinfox_5.png" class="show_bg" alt="Demo image" /></td>
-            <td><img src="/example-animation/spinfox_25.png" class="show_bg" alt="Demo image" /></td>
-            <td><img src="/example-animation/spinfox_50.png" class="show_bg" alt="Demo image" /></td>
-        </tr>
-
-        <tr>
-            <th>Partially loaded APNG<br>(86,254 first bytes, 15%)</th>
-            <th>Partially loaded APNG<br>(189,759 first bytes, 33%)</th>
-            <th>Partially loaded APNG<br>(304,764 first bytes, 53%)</th>
-        </tr>
-        <tr>
-            <td><img src="/example-animation/spinfox_cut15.png" class="show_bg" alt="Demo image" /></td>
-            <td><img src="/example-animation/spinfox_cut33.png" class="show_bg" alt="Demo image" /></td>
-            <td><img src="/example-animation/spinfox_cut53.png" class="show_bg" alt="Demo image" /></td>
-        </tr>
-    </table>
-
+<body id="404">
+    <table><tr><td>
+        <a href="/index.html" class="img"><img src="/_img/flif.png" alt="FLIF Logo" /></a>
+        <h3><strong>404:</strong> Page not found</h3>
+    </td></tr></table>
 </body>
 </html>
