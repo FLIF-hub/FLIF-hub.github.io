@@ -1,49 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />     <!-- Must be first item in <head> -->
-    <title>FLIF - Free Lossless Image Format</title>
-    <meta charset="UTF-8"                                                                                   />
-    <meta http-equiv="Content-Type"              content="text/html;charset=utf-8"                          />
-    <meta http-equiv="cleartype"                 content="on"                                               />
-    <meta name="description"                     content="Official website for the FLIF image format" />
-    <meta name="keywords"                        content="FLIF, Free Lossless Image Format, compression, responsive, lossy, animation, png alternative, bpg, jpg, webm, webp, jpeg 2000, gif, apng, Adam 7" />
-    <meta http-equiv="Expires"                   content="0"                                                />
-    <meta name="viewport"                        content="width=device-width, initial-scale=1.0"            />
-    <meta name="subject"                         content="Image Format"                                     />
-    <meta name="language"                        content="EN"                                               />
-    <meta name="robots"                          content="index,follow"                                     />
-    <meta name="rating"                          content="General"                                          />
-    <meta name="HandheldFriendly"                content="True"                                             />
-    <meta name="application-name"                content="FLIF"                                             />
-    <meta name="msapplication-navbutton-color"   content="#FFFFFF"                                          />
-    <meta name="msapplication-TileColor"         content="#FFFFFF"                                          />
-    <meta name="msapplication-square70x70logo"   content="/_img/meta/mstile01sm.png"                        />
-    <meta name="msapplication-square150x150logo" content="/_img/meta/mstile02md.png"                        />
-    <meta name="msapplication-wide310x150logo"   content="/_img/meta/mstile03wd.png"                        />
-    <meta name="msapplication-square310x310logo" content="/_img/meta/mstile04lg.png"                        />
-    <meta name="apple-mobile-web-app-title"      content="FLIF"                                             />
-    <meta name="apple-mobile-web-app-capable"    content="no"     /> <!-- "yes" hides Safari navbar in iOS -->
-    <meta name="apple-touch-fullscreen"          content="no"                                               />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black"                                      />
-    <link rel="apple-touch-icon"             href="/_img/meta/apl-57.png"  type="image/png" sizes="57x57"    />
-    <link rel="apple-touch-icon-precomposed" href="/_img/meta/apl-57.png"  type="image/png" sizes="57x57"    />
-    <link rel="apple-touch-icon"             href="/_img/meta/apl-72.png"  type="image/png" sizes="72x72"    />
-    <link rel="apple-touch-icon-precomposed" href="/_img/meta/apl-72.png"  type="image/png" sizes="72x72"    />
-    <link rel="apple-touch-icon"             href="/_img/meta/apl-114.png" type="image/png" sizes="114x114"  />
-    <link rel="apple-touch-icon-precomposed" href="/_img/meta/apl-114.png" type="image/png" sizes="114x114"  />
-    <link rel="apple-touch-icon"             href="/_img/meta/apl-144.png" type="image/png" sizes="144x144"  />
-    <link rel="apple-touch-icon-precomposed" href="/_img/meta/apl-144.png" type="image/png" sizes="144x144"  />
-    <link rel="apple-touch-startup-image"    href="/_img/meta/apl-str.png" type="image/png"                  />
-    <link rel="fluid-icon"                   href="/_img/meta/fluid.png"   type="image/png"                  />
-    <link rel="icon"                         href="/favicon.ico"           type="image/x-icon"               />
-    <link rel="shortcut icon"                href="/favicon.ico"           type="image/ico"                  />
-    <link rel="stylesheet"                   href="/_style/style.css"      type="text/css"                   />
-</head>
+---
+title: FLIF - Free Lossless Image Format
+group: home
+---
+{% include header.html %}
 
-<body>
     <div id="container">
-        <img src="/_img/flif.png" alt="FLIF logo" class="logo" />
+        <img src="img/flif.png" alt="FLIF logo" class="logo" />
     </div>
 
 
@@ -72,7 +34,7 @@
             <dt>Best compression</dt>
             <dd>
                 <p>The results of a compression test similar to the <a href="https://developers.google.com/speed/webp/docs/webp_lossless_alpha_study#results">WebP study</a> are shown below. FLIF clearly beats other image compression algorithms.</p>
-                <a href="comparison.png" class="img"><img src="/_img/comparison.png" alt="Chart comparing FLIF to alternatives."></a>
+                <a href="img/comparison.png" class="img"><img src="img/comparison.png" alt="Chart comparing FLIF to alternatives."></a>
             </dd>
             <dt>Works on any kind of image</dt>
             <dd>
@@ -90,9 +52,9 @@
     </div>
 
     <div class="small_images">
-        <a href="/_img/compression-kodak.png" class="img"><img src="/_img/compression-kodak.png" alt="Chart showing a comparison of FLIF to alternatives against the Kodak Suite" /></a>
-        <a href="/_img/compression-lukas_medical.png" class="img"><img src="/_img/compression-lukas_medical.png" alt="Chart showing a comparison of FLIF to alternatives against the Lukas 2D Medical Images Suite"></a>
-        <a href="/_img/compression-maps.png" class="img"><img src="/_img/compression-maps.png" alt="Chart showing a comparison of FLIF to alternatives against a set of geographical maps" /></a>
+        <a href="img/compression-kodak.png" class="img"><img src="img/compression-kodak.png" alt="Chart showing a comparison of FLIF to alternatives against the Kodak Suite" /></a>
+        <a href="img/compression-lukas_medical.png" class="img"><img src="img/compression-lukas_medical.png" alt="Chart showing a comparison of FLIF to alternatives against the Lukas 2D Medical Images Suite"></a>
+        <a href="img/compression-maps.png" class="img"><img src="img/compression-maps.png" alt="Chart showing a comparison of FLIF to alternatives against a set of geographical maps" /></a>
     </div>
 
     <dl>
@@ -108,13 +70,13 @@
 
             <p>Lossy compression is useful when network bandwidth or diskspace are limited, and you still want to get a visually OK image. The disadvantages of lossy compression are obvious: information is lost forever, compression artifacts can be noticeable, and transcoding or editing can cause <a href="https://en.wikipedia.org/wiki/Generation_loss">generation loss</a>. With better compression, the need to go there is lessened.</p>
 
-            <p><a href="/example.html">Here is an example</a> to illustrate the progressive decoding of FLIF, compared to other methods.</p>
+            <p><a href="example.html">Here is an example</a> to illustrate the progressive decoding of FLIF, compared to other methods.</p>
         </dd>
 
         <dt>Responsive by design</dt>
         <dd>
             <p>A FLIF image can be loaded in different &lsquo;variations&rsquo; from the same source file, by loading the file only partially. This makes it a very appropriate file format for responsive web design.</p>
-            <p><a href="/responsive.html">Read more about FLIF and Responsive Web Design</a></p>
+            <p><a href="responsive.html">Read more about FLIF and Responsive Web Design</a></p>
             <p>Try the <a href="https://uprootlabs.github.io/poly-flif/">Poly-FLIF interactive demo</a> by <a href="https://github.com/hrj">hrj</a>!</p>
         </dd>
 
@@ -148,9 +110,9 @@
         <li>Greyscale, RGB, RGBA</li>
         <li>Color depth: up to 16 bits per channel (high dynamic range)</li>
         <li>Interlaced (default) or non-interlaced</li>
-        <li>Interlaced files can be decoded quickly at lower quality/resolution (<a href="/responsive.html">&ldquo;Responsive By Design&rdquo;</a>)</li>
-        <li><a href="/example.html">Progressive decoding</a> of partially downloaded files</li>
-        <li><a href="/animation.html">Animation support</a></li>
+        <li>Interlaced files can be decoded quickly at lower quality/resolution (<a href="responsive.html">&ldquo;Responsive By Design&rdquo;</a>)</li>
+        <li><a href="example.html">Progressive decoding</a> of partially downloaded files</li>
+        <li><a href="animation.html">Animation support</a></li>
         <li>Encoding and decoding speeds are not blazingly fast, but they are in the right ballpark</li>
     </ul>
 
@@ -173,5 +135,11 @@
 
     <p>Moreover, FLIF supports a form of progressive interlacing (essentially a generalization/improvement of PNG&apos;s <a href="https://en.wikipedia.org/wiki/Adam7_algorithm">Adam7 interlacing</a>) which means that any prefix (e.g. partial download) of a compressed file can be used as a reasonable lossy encoding of the entire image. In contrast to other interlacing image formats (e.g. PNG or GIF), interlaced FLIF encoding takes the interlacing into account in the pixel estimation and in the MANIAC context model. As a result, the overhead of interlacing is small, and in some cases (e.g. photographs) interlaced FLIF files are even smaller than non-interlaced ones.</p>
 
+<script>
+  ((window.gitter = {}).chat = {}).options = {
+    room: 'FLIF-hub/FLIF'
+  };
+</script>
+<script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
 </body>
 </html>
