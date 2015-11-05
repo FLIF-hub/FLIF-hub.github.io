@@ -9,6 +9,7 @@
 
 //Stuff that effects every page
 @import "_main.sass";         // Main CSS for the site
+@import "_menu.sass";         // Navigation menu at the top of every page
 
 //Stuff that effects specific pages
 @import "_404.sass";          // 404: Styles not found.
