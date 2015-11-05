@@ -40,46 +40,21 @@
     <link rel="shortcut icon"                href="favicon.ico"          type="image/ico"                  />
     <link rel="stylesheet"                   href="style/style.css"      type="text/css"                   />
 </head>
-
 <body>
-<style>
-#menu {
-  width: 100%;
-  padding: 3px 1em;
-  border-bottom: 1px solid #ccc;
-}
-#menu a {
-  text-decoration: none;
-  padding: 1px 0.7em;
-  color: #000;
-}
-#menu a:hover {
-  text-decoration: bold;
-  border-bottom: 3px solid #811;
-  background: transparent;
-  color: #811;
-}
-#menu a.active{
-  font-weight: bold;
-}
-</style>
-<div id="menu">
-{% if page.group != "home" %}
-        <a
-{% else %}
-        <a class="active"
-{% endif %}
-        href="index.html">Home</a>
-{% for node in site.pages %}
-  {% if node.group == "menu" %}
-    {% if page.url == node.url %}
-        <a class="active" href="{{node.url}}">{{node.menu_title}}</a>
-    {% else %}
-        <a href="{{node.url}}">{{node.menu_title}}</a>
-    {% endif %}
-  {% endif %}
-{%endfor %}
-</div>
-<br />
-
-
+    <div id="menu">
+        {% if page.group != "home" %}
+            <a
+        {% else %}
+            <a class="active"
+        {% endif %}
+            href="index.html">Home</a>
+        {% for node in site.pages %}
+            {% if node.group == "menu" %}
+                {% if page.url == node.url %}
+                    <a class="active" href="{{node.url}}">{{node.menu_title}}</a>
+                {% else %}
+                    <a href="{{node.url}}">{{node.menu_title}}</a>
+                {% endif %}
+            {% endif %}
+        {%endfor %}
+    </div>
