@@ -47,7 +47,7 @@
         {% else %}
             <a class="active"
         {% endif %}
-            href="index.html">Home</a>
+            href="index.html">FLIF home</a>
         {% for node in site.pages %}
             {% if node.group == "menu" %}
                 {% if page.url == node.url %}
@@ -58,3 +58,14 @@
             {% endif %}
         {%endfor %}
     </div>
+
+<!-- Google Analytics, to get some visitor statistics (sorry if you are offended by this) -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69783887-1', 'auto');
+  ga('send', 'pageview');
+</script>
