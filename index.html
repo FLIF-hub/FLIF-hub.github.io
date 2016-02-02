@@ -11,19 +11,27 @@ group: home
 
     <h2 id="flif-free-lossless-image-format">FLIF - Free Lossless Image Format</h2>
 
-    <p>FLIF is a novel lossless image format which outperforms PNG, lossless WebP, lossless BPG and lossless JPEG2000 in terms of compression ratio.</p>
+    <p>FLIF is a novel lossless image format which outperforms PNG, lossless WebP, lossless BPG, lossless JPEG2000, and lossless JPEG XR
+    in terms of compression ratio.</p>
 
-    <p>According to the <a href="https://docs.google.com/spreadsheets/d/16ghJEjf_T7TDTOg2WlelnG1SYCsHng6V-1rxdo78YL8/edit?usp=sharing">compression experiments we have performed</a>, FLIF files are, on average:</p>
-
+    <p>According to the
+    <a href="https://docs.google.com/spreadsheets/d/1LxY78fbm47VmrYGTXkBXXitGjhGl32NsuHPH2QXufgA/edit?usp=sharing">compression experiments we have performed</a>
+    <a href="https://docs.google.com/spreadsheets/d/16ghJEjf_T7TDTOg2WlelnG1SYCsHng6V-1rxdo78YL8/edit?usp=sharing">[older results here]</a>,
+    FLIF files are on average:</p>
     <ul>
-        <li>26% smaller than brute-force crushed PNG files,</li>
-        <li>35% smaller than typical PNG files,</li>
-        <li>37% smaller than lossless JPEG 2000 compression,</li>
-        <li>15% smaller than lossless <a href="https://developers.google.com/speed/webp/">WebP</a>,</li>
-        <li>22% smaller than lossless <a href="http://bellard.org/bpg/">BPG</a>.</li>
+        <li>14% smaller than lossless <a href="https://developers.google.com/speed/webp/">WebP</a>,</li>
+        <li>22% smaller than lossless <a href="http://bellard.org/bpg/">BPG</a>,</li>
+        <li>33% smaller than brute-force crushed PNG files (using ZopfliPNG),</li>
+        <li>43% smaller than typical PNG files,</li>
+        <li>46% smaller than optimized Adam7-interlaced PNG files,</li>
+        <li>53% smaller than lossless JPEG 2000 compression,</li>
+        <li>74% smaller than lossless JPEG XR compression.</li>
     </ul>
 
-    <p>Even if the best image format was picked out of PNG, JPEG 2000, WebP or BPG for a given image, depending on the type of image (photograph, line art, etc), <strong>then FLIF still beats that by <em>an average</em> of 10%</strong> in our comparisons.</p>
+    <p>Even if the best image format was picked out of PNG, JPEG 2000, WebP or BPG for a given image corpus,
+    depending on the type of images (photograph, line art, 8 bit or higher bit depth, etc),
+    <strong>then FLIF still beats that by 12%</strong> on a <i>median</i> corpus
+    (or 19% on average, including 16-bit images which are not supported by WebP and BPG).</p>
 
 
     <h2 id="advantages">Advantages</h2>
@@ -33,7 +41,8 @@ group: home
         <dl>
             <dt>Best compression</dt>
             <dd>
-                <p>The results of a compression test similar to the <a href="https://developers.google.com/speed/webp/docs/webp_lossless_alpha_study#results">WebP study</a> are shown below. FLIF clearly beats other image compression algorithms.</p>
+                <p>The results of a compression test similar to the <a href="https://developers.google.com/speed/webp/docs/webp_lossless_alpha_study#results">WebP study</a> are shown below. FLIF clearly beats other image compression algorithms.
+                (Note: the graph below is for an early version of FLIF. It has slightly improved since then.)</p>
                 <a href="img/comparison.png" class="img"><img src="img/comparison.png" alt="Chart comparing FLIF to alternatives."></a>
             </dd>
             <dt>Works on any kind of image</dt>
@@ -82,15 +91,33 @@ group: home
 
         <dt>No patents, Free</dt>
         <dd>
-            <p>Unlike some other image formats (e.g. BPG and JPEG 2000), FLIF is completely royalty-free and it is not encumbered by software patents.</p>
-            <p>FLIF is <a href="http://fsfe.org/about/basics/freesoftware.en.html">Free Software</a>. It is released under the GNU General Public License (GPL) version 3 or any later version. That means you get the &ldquo;four freedoms&rdquo;:</p>
+            <p>Unlike some other image formats (e.g. BPG and JPEG 2000), FLIF is completely royalty-free and it is not known to be encumbered by software patents.
+            At least as far as we know.
+            FLIF is uses <a href="https://en.wikipedia.org/wiki/Arithmetic_coding">arithmetic coding</a>,
+            just like <a href="https://en.wikipedia.org/wiki/FFV1">FFV1</a> (which inspired FLIF), but as far as we know,
+            all patents related to arithmetic coding <a href="https://en.wikipedia.org/wiki/Arithmetic_coding#US_patents">are expired</a>.
+            Other than that, we do not think FLIF uses any techniques on which patents are claimed.
+            However, we are not lawyers. There are a stunning number of software patents, some of which are very broad and vague;
+            it is impossible to read them all, let alone guarantee that nobody will ever claim part of FLIF to be covered by some patent.
+            All we know is that we did not knowingly use any technique which is (still) patented, and we did not patent FLIF ourselves either.
+            </p>
+            <p>
+            <a href="http://www.gnu.org/licenses/lgpl.html"><img src="img/lgplv3.png"></a>
+            </p>
+            <p>The reference implementation of FLIF is <a href="http://fsfe.org/about/basics/freesoftware.en.html">Free Software</a>.
+            It is released under the terms of the <a href="http://www.gnu.org/licenses/gpl.html">GNU Lesser General Public License (LGPL)</a>,
+            version 3 or any later version.
+            That means you get the &ldquo;four freedoms&rdquo;:</p>
             <ol>
                 <li>The freedom to run the program, for any purpose.</li>
                 <li>The freedom to study how the program works, and adapt it to your needs.</li>
                 <li>The freedom to redistribute copies.</li>
                 <li>The freedom to improve the program, and release your improvements to the public, so that the whole community benefits.</li>
             </ol>
-            <p>Moreover, FLIF is free of charge (gratis).</p>
+            <p>The reference FLIF decoder is also available as a shared library, released under the more permissive
+            (non-copyleft) terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.
+            Public domain example code is available to illustrate how to use the decoder library.</p>
+            <p>Moreover, the reference implementation is available free of charge (gratis) under these terms.</p>
         </dd>
     </dl>
 
@@ -109,12 +136,15 @@ group: home
     <ul>
         <li>Lossless compression</li>
         <li>Greyscale, RGB, RGBA</li>
-        <li>Color depth: up to 16 bits per channel (high dynamic range)</li>
+        <li>Color depth: up to 16 bits per channel (high bit depth)</li>
         <li>Interlaced (default) or non-interlaced</li>
         <li>Interlaced files can be decoded quickly at lower quality/resolution (<a href="responsive.html">&ldquo;Responsive By Design&rdquo;</a>)</li>
         <li><a href="example.html">Progressive decoding</a> of partially downloaded files</li>
         <li><a href="animation.html">Animation support</a></li>
-        <li>Encoding and decoding speeds are not blazingly fast, but they are in the right ballpark</li>
+        <li>Rudimentary support to compress camera raw files (RGGB)</li>
+        <li>Rudimentary support for metadata (arbitrary embedded extra data, currently just ignored by the decoder)</li>
+        <li>Encoding and decoding speeds are acceptable, but should be improved</li>
+        <li>Fallback web browser support via a JavaScript polyfill decoder (poly-flif)</li>
     </ul>
 
 
@@ -122,10 +152,12 @@ group: home
 
     <p>FLIF does not yet support the following features:</p>
     <ul>
-        <li>Metadata (EXIF, ICC profiles, XMP, ...)</li>
+        <li>Good support for metadata (EXIF, ICC profiles, XMP, ...)</li>
         <li>Other color spaces (CMYK, YCbCr, ...)</li>
+        <li>Tiles (to store huge images with fast cropped viewing)</li>
         <li>Lossy compression</li>
-        <li>Web browser support</li>
+        <li>Native web browser support</li>
+        <li>Support in popular image tools and viewers</li>
         <li>A highly optimized implementation</li>
     </ul>
 
