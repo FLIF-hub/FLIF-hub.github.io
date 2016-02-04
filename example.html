@@ -41,7 +41,7 @@ menu_title: Example
         <li>PNG also does not have a lossy mode, but Adam7 interlaced files can be decoded progressively.</li>
     </ul>
 
-    <p>Let us compare the compression artifacts of the different formats. We'll look atpartial FLIF and PNG files, and compare with lossy WebP, lossy JPEG 2000, lossy BPG,and the older standard formats GIF and JPEG.</p>
+    <p>Let us compare the compression artifacts of the different formats. We'll look at partial FLIF and PNG files, and compare with lossy WebP, lossy JPEG 2000, lossy BPG, and the older standard formats GIF and JPEG.</p>
 
     <p>Note that what we will be doing is not a fair comparison. It heavily disadvantages FLIF and PNG, because we are looking at different-sized first parts of <strong>one file</strong> (the one that eventually leads to a lossless image), while for the other formats, we look at <strong>multiple files</strong>, each optimized for a specific quality setting.</p>
 
@@ -206,9 +206,9 @@ menu_title: Example
 
     <p>What about progressive decoding of the other lossless formats?</p>
     <ul>
-        <li>Lossless WebP does not support progressive decoding (it will simply refuseto decode incomplete files).</li>
-        <li>JPEG 2000 supposedly does support progressive decoding but I haven't founda way yet to do that (please help me if you know a way!).</li>
-        <li>BPG makes no claims about progressive decoding, but trying to decode anincomplete file does sometimes work.</li>
+        <li>Lossless WebP does not support progressive decoding (it will simply refuse to decode incomplete files).</li>
+        <li>JPEG 2000 supposedly does support progressive decoding but I haven't found a way yet to do that (please help me if you know a way!).</li>
+        <li>BPG makes no claims about progressive decoding, but trying to decode an incomplete file does sometimes work.</li>
     </ul>
 
     <p>BPG is very good at lossy compression, but its lossless files cannot be progressively decoded very well. In this example, <code>bpgdec</code> only wanted to decode the lossless BPG file after about 90,000 bytes were downloaded, and then still only the alpha channel seems to be OK:</p>
