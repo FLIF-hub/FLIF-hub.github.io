@@ -1,0 +1,83 @@
+---
+title: FLIF - Lossy compression
+---
+{% include header.html %}
+
+
+    <h1 id="lossy-flif">Lossy <a href="/index.html">FLIF</a></h1>
+
+    <p>FLIF is a lossless format, but that doesn't mean it cannot also be <a href="lossy.html">used in a lossy way</a>.</p>
+    <p>Here is a case study to let you judge for yourself. You can click on the small crops to get the full image.</p>
+    <table>
+        <tr>
+            <th>Original (lossless)<br>1,688,504 byte PNG<br>1,321,602 byte FLIF<br>1,398,900 byte WebP<br>PSNR: inf<br>DSSIM: 0</th>
+            <th>Lossy FLIF<br>969,683 bytes<br>PSNR: 52.1842<br>DSSIM: 0.000109</th>
+            <th>JPEG (quality 99)<br>1,100,684 bytes<br>PSNR: 48.0707<br>DSSIM: 0.000182</th>
+            <th>WebP (near-lossless)<br>1,021,038 bytes<br>PSNR: 38.2652<br>DSSIM: 0.001794</th>
+        </tr>
+        <tr><td><a href="/example-lossy/original.png" class="img">
+               <img src="/example-lossy/original-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/near-lossless/image-flif.png" class="img">
+                    <img src="/example-lossy/near-lossless/image-flif-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/near-lossless/image.jpg" class="img">
+                    <img src="/example-lossy/near-lossless/image-jpg-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/near-lossless/image-webp.png" class="img">
+                    <img src="/example-lossy/near-lossless/image-webp-cropped.png" alt="Fragment of an image" /></a></td>
+        </tr>
+        <tr>
+            <th>Original (lossless)<br>PSNR: inf<br>DSSIM: 0</th>
+            <th>Lossy FLIF<br>549,250 bytes<br>PSNR: 45.9627<br>DSSIM: 0.000573</th>
+            <th>JPEG (quality 96)<br>598,955 bytes<br>PSNR: 42.4322<br>DSSIM: 0.000456</th>
+            <th>WebP (quality 100)<br>564,464 bytes<br>PSNR: 38.6303<br>DSSIM: 0.000600</th>
+        </tr>
+        <tr><td><a href="/example-lossy/original.png" class="img">
+               <img src="/example-lossy/original-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/high/image-flif.png" class="img">
+                    <img src="/example-lossy/high/image-flif-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/high/image.jpg" class="img">
+                    <img src="/example-lossy/high/image-jpg-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/high/image-webp.png" class="img">
+                    <img src="/example-lossy/high/image-webp-cropped.png" alt="Fragment of an image" /></a></td>
+        </tr>
+        <tr><td><a href="/example-lossy/original.png" class="img">
+               <img src="/example-lossy/original-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/medium/image-flif.png" class="img">
+                    <img src="/example-lossy/medium/image-flif-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/medium/image.jpg" class="img">
+                    <img src="/example-lossy/medium/image-jpg-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/medium/image-webp.png" class="img">
+                    <img src="/example-lossy/medium/image-webp-cropped.png" alt="Fragment of an image" /></a></td>
+        </tr>
+        <tr>
+            <th>Original (lossless)<br>PSNR: inf<br>DSSIM: 0</th>
+            <th>Lossy FLIF<br>144,080 bytes<br>PSNR: 34.7048<br>DSSIM: 0.012480</th>
+            <th>JPEG (quality 80)<br>164,136 bytes<br>PSNR: 33.975<br>DSSIM: 0.002876</th>
+            <th>WebP (quality 85)<br>156,408 bytes<br>PSNR: 36.0936<br>DSSIM: 0.002792</th>
+        </tr>
+        <tr><td><a href="/example-lossy/original.png" class="img">
+               <img src="/example-lossy/original-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/low/image-flif.png" class="img">
+                    <img src="/example-lossy/low/image-flif-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/low/image.jpg" class="img">
+                    <img src="/example-lossy/low/image-jpg-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/low/image-webp.png" class="img">
+                    <img src="/example-lossy/low/image-webp-cropped.png" alt="Fragment of an image" /></a></td>
+        </tr>
+        <tr>
+            <th>Original (lossless)<br>PSNR: inf<br>DSSIM: 0</th>
+            <th>Lossy FLIF<br>52,025 bytes<br>PSNR: 28.2877<br>DSSIM: 0.052556</th>
+            <th>JPEG (quality 80)<br>54,810 bytes<br>PSNR: 29.8108<br>DSSIM: 0.015136</th>
+            <th>WebP (quality 85)<br>54,556 bytes<br>PSNR: 31.6246<br>DSSIM: 0.012044</th>
+        </tr>
+        <tr><td><a href="/example-lossy/original.png" class="img">
+               <img src="/example-lossy/original-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/verylow/image-flif.png" class="img">
+                    <img src="/example-lossy/verylow/image-flif-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/verylow/image.jpg" class="img">
+                    <img src="/example-lossy/verylow/image-jpg-cropped.png" alt="Fragment of an image" /></a></td>
+            <td><a href="/example-lossy/verylow/image-webp.png" class="img">
+                    <img src="/example-lossy/verylow/image-webp-cropped.png" alt="Fragment of an image" /></a></td>
+        </tr>
+    </table>
+</body>
+</html>

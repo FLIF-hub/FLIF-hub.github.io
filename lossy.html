@@ -1,0 +1,62 @@
+---
+title: FLIF - Lossy compression
+group: menu
+menu_title: Lossy?
+---
+{% include header.html %}
+
+
+    <h1 id="lossy-flif">Lossy <a href="/index.html">FLIF</a></h1>
+
+    <p>FLIF is a lossless format. Still, if you want to, you can allow the encoder to modify the input image in order to improve compression.
+    Obviously it will only do that if you tell it to, by using the command-line option <code>--lossy [quality]</code>.
+    </p>
+    <h2 id="advantages">Advantages of lossy FLIF</h2>
+    <p>One of the advantages of using a lossless format in a lossy way (as opposed to using a lossy format), is that
+    <a href="https://en.wikipedia.org/wiki/Generation_loss">generation loss</a> is not an issue.
+    Of course the information that is lost, stays lost, but no matter how many times you save a FLIF file,
+    it will not get any additional loss from a decode-encode cycle. This is not the case for e.g. JPEG, where each decode-encode cycle <i>always</i> introduces additional loss.
+    </p>
+    <p>Lossy FLIF has the same advantages as lossless FLIF: it works well on any kind of image (photographs, webcomics, abstract art, whatever),
+    and it is still <a href="responsive.html">Responsive by design</a>: you can still progressively decode a lossy FLIF or generate a thumbnail from
+    the first part of the file.
+    </p>
+    <table>
+        <tr>
+            <th>Original (lossless)<br>104,585 byte PNG<br>57,648 byte FLIF</th>
+            <th>Lossy FLIF<br>37,096 bytes</th>
+            <th>JPEG (quality 25)<br>37,923 bytes</th>
+        </tr>
+        <tr><td><a href="example-lossy/SMBC-comic.png" class="img"><img src="example-lossy/SMBC-comic.png" alt="SMBC comic" width="306" height="354"/></a></td>
+            <td><a href="example-lossy/SMBC-comic-flif.png" class="img"><img src="example-lossy/SMBC-comic-flif.png" alt="SMBC comic" width="306" height="354"/></a></td>
+            <td><a href="example-lossy/SMBC-comic.jpg" class="img"><img src="example-lossy/SMBC-comic.jpg" alt="SMBC comic" width="306" height="354"/></a></td>
+        </tr>
+    </table>
+    <h2 id="comparison">Comparison to lossy formats</h2>
+    <p><a href="lossy-artifacts.html">Here is a case study</a> on one image to give you an idea of the kind of artifacts lossy FLIF causes. In our opinion,
+    at low qualities and for photographs, dedicated lossy formats like WebP, JPEG or BPG still produce better results. However, at very high-quality,
+    we think lossy FLIF is a better option. Lossy WebP has obligatory chroma subsampling and YCbCr color transformation, which limits its usefulness
+    at high qualities. JPEG also suffers from the YCbCr transformation, which effectively reduces 24-bit color to 22-bit (with most of the loss in reds and blues).
+    FLIF, being a lossless format, does not have these limitations.
+    </p>
+    <p>
+    At high qualities, FLIF is better than JPEG and WebP in terms of PSNR for a given file size. Here are some plots to demonstrate this.
+    The highest PSNR value shown here is actually lossless (which would be PSNR=infinity), but we changed that value to fit it on the plot.
+    Only FLIF and near-lossless WebP can go completely lossless. The full quality range (0 to 100) is shown for each format.
+    </p>
+    <dl>
+        <dt id="photographs">Photographs</dt>
+        <dd>
+        <a href="img/wikipedia-photos.gif"><img src="img/wikipedia-photos.gif" alt="PSNR vs bits-per-pixel for photographs"></a>
+        </dd>
+        <dt id="webcomics">Line art (webcomics)</dt>
+        <dd>
+        <a href="img/SMBC-comics.gif"><img src="img/SMBC-comics.gif" alt="PSNR vs bits-per-pixel for webcomics"></a>
+        </dd>
+        <dt id="fractals">Abstract images (fractal art)</dt>
+        <dd>
+        <a href="img/fractal-art.gif"><img src="img/fractal-art.gif" alt="PSNR vs bits-per-pixel for abstract fractal-based art"></a>
+        </dd>
+    </dl>
+</body>
+</html>
