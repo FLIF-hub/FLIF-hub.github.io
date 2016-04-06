@@ -28,12 +28,14 @@ menu_title: Lossy?
     <table>
         <tr>
             <th>Original (lossless)<br>104,585 byte PNG<br>52,848 byte FLIF</th>
-            <th>Lossy FLIF<br>37,096 bytes</th>
+            <th>Lossy FLIF<br>37,207 bytes</th>
             <th>JPEG (mozjpeg, quality 50)<br>37,379 bytes</th>
+            <th>JPEG (libjpeg, quality 50)<br>37,923 bytes</th>
         </tr>
-        <tr><td><a href="example-lossy/SMBC-comic.png" class="img"><img src="example-lossy/SMBC-comic.png" alt="SMBC comic" width="306" height="354"/></a></td>
-            <td><a href="example-lossy/SMBC-comic-flif.png" class="img"><img src="example-lossy/SMBC-comic-flif.png" alt="SMBC comic" width="306" height="354"/></a></td>
-            <td><a href="example-lossy/SMBC-comic-mozjpeg.jpg" class="img"><img src="example-lossy/SMBC-comic.jpg" alt="SMBC comic" width="306" height="354"/></a></td>
+        <tr><td><a href="example-lossy/SMBC-comic.png" class="img"><img src="example-lossy/SMBC-comic-crop.png" alt="SMBC comic, original"/></a></td>
+            <td><a href="example-lossy/SMBC-comic-flif.png" class="img"><img src="example-lossy/SMBC-comic-flif-crop.png" alt="SMBC comic, FLIF"/></a></td>
+            <td><a href="example-lossy/SMBC-comic-mozjpeg.jpg" class="img"><img src="example-lossy/SMBC-comic-mozjpeg-crop.png" alt="SMBC comic, MozJPEG"/></a></td>
+            <td><a href="example-lossy/SMBC-comic.jpg" class="img"><img src="example-lossy/SMBC-comic-jpeg-crop.png" alt="SMBC comic, JPEG"/></a></td>
         </tr>
     </table>
     <h2 id="comparison">Comparison to lossy formats</h2>
@@ -44,22 +46,27 @@ menu_title: Lossy?
     FLIF, being a lossless format, does not have these limitations.
     </p>
     <p>
-    At high qualities, FLIF is better than JPEG and WebP in terms of PSNR for a given file size. Here are some plots to demonstrate this.
-    The highest PSNR value shown here is actually lossless (which would be PSNR=infinity), but we changed that value to fit it on the plot.
-    Only FLIF and near-lossless WebP can go completely lossless. The full quality range (0 to 100) is shown for each format.
+    Lossy FLIF is competitive with specialized lossy formats like JPEG, JPEG XR, JPEG 2000, and WebP in terms of
+    <a href="https://kornel.ski/dssim">DSSIM</a> (perceptual quality) for a given file size, while it avoids the problem of generation loss
+    and it works well on all kinds of images, also non-photographic ones. Here are some plots to demonstrate this.
+    </p>
+    <p>
+    The best (lowest) DSSIM value shown here is actually lossless (which would be DSSIM=0, which cannot be shown on a logarithmic plot like this so we changed
+    the value to 0.000001).
+    The full quality range is shown for each format. Note that WebP are actually two formats: a lossy format based on VP8, and a (near-)lossless format.
     </p>
     <dl>
-        <dt id="photographs">Photographs</dt>
+        <dt id="photographs">Photographic image</dt>
         <dd>
-        <a href="img/wikipedia-photos.gif"><img src="img/wikipedia-photos.gif" alt="PSNR vs bits-per-pixel for photographs"></a>
+        <a href="img/wikipedia-photo.svg"><img src="img/wikipedia-photo.svg" alt="DSSIM vs bits-per-pixel for a photographic image" onerror="this.src='img/wikipedia-photo.png'; this.onerror=null;"></a>
         </dd>
-        <dt id="webcomics">Line art (webcomics)</dt>
+        <dt id="webcomics">Line art (webcomic)</dt>
         <dd>
-        <a href="img/SMBC-comics.gif"><img src="img/SMBC-comics.gif" alt="PSNR vs bits-per-pixel for webcomics"></a>
+        <a href="img/SMBC-comic.svg"><img src="img/SMBC-comic.svg" alt="DSSIM vs bits-per-pixel for a webcomic" onerror="this.src='img/SMBC-comic.png'; this.onerror=null;"></a>
         </dd>
-        <dt id="fractals">Abstract images (fractal art)</dt>
+        <dt id="fractals">Abstract image (fractal art)</dt>
         <dd>
-        <a href="img/fractal-art.gif"><img src="img/fractal-art.gif" alt="PSNR vs bits-per-pixel for abstract fractal-based art"></a>
+        <a href="img/fractal-art.svg"><img src="img/fractal-art.svg" alt="DSSIM vs bits-per-pixel for a fractal art image" onerror="this.src='img/fractal-art.png'; this.onerror=null;"></a>
         </dd>
     </dl>
 </body>
