@@ -124,8 +124,6 @@ group: home
 
     <h2 id="download">Download</h2>
 
-    <p><strong>WARNING:</strong> FLIF is a work in progress. The format is not finalized yet. Any small or large change in the algorithm will most likely mean that FLIF files encoded with an older version will no longer be correctly decoded by a newer version. Keep this in mind.</p>
-
     <p><a href="https://github.com/FLIF-hub/FLIF">FLIF source code</a></p>
     <p><a href="http://flif.info/UGUI_FLIF">UGUI: FLIF</a> - A GUI for FLIF</p>
 
@@ -167,6 +165,8 @@ group: home
     <p>FLIF is based on MANIAC compression. MANIAC (Meta-Adaptive Near-zero Integer Arithmetic Coding) is an algorithm for entropy coding developed by Jon Sneyers and Pieter Wuille. It is a variant of <a href="https://en.wikipedia.org/wiki/Context-adaptive_binary_arithmetic_coding">CABAC (context-adaptive binary arithmetic coding)</a>, where instead of using a multi-dimensional array of quantized local image information, the contexts are nodes of decision trees which are dynamically learned at encode time. This means a much more image-specific context model can be used, resulting in better compression.</p>
 
     <p>Moreover, FLIF supports a form of progressive interlacing (essentially a generalization/improvement of PNG&apos;s <a href="https://en.wikipedia.org/wiki/Adam7_algorithm">Adam7 interlacing</a>) which means that any prefix (e.g. partial download) of a compressed file can be used as a reasonable lossy encoding of the entire image. In contrast to other interlacing image formats (e.g. PNG or GIF), interlaced FLIF encoding takes the interlacing into account in the pixel estimation and in the MANIAC context model. As a result, the overhead of interlacing is small, and in some cases (e.g. photographs) interlaced FLIF files are even smaller than non-interlaced ones.</p>
+
+    <p>Many more technical details can be found in the <a href="publications.html">publications</a> section of this website.
 
 <script>
   ((window.gitter = {}).chat = {}).options = {
