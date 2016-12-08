@@ -524,6 +524,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_overview_of_the_format">Overview of the format</a></li>
+<li><a href="#_notational_conventions">Notational conventions</a></li>
 <li><a href="#_part_1_main_header">Part 1: main header</a></li>
 <li><a href="#_part_2_metadata">Part 2: metadata</a></li>
 <li><a href="#_symbol_encoding">Symbol encoding</a>
@@ -534,7 +535,16 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 <li><a href="#_part_3_second_header">Part 3: second header</a>
 <ul class="sectlevel2">
-<li><a href="#_transformations">Transformations</a></li>
+<li><a href="#_transformation_0_channelcompact">Transformation 0: ChannelCompact</a></li>
+<li><a href="#_transformation_1_ycocg">Transformation 1: YCoCg</a></li>
+<li><a href="#_transformation_3_permuteplanes">Transformation 3: PermutePlanes</a></li>
+<li><a href="#_transformation_4_bounds">Transformation 4: Bounds</a></li>
+<li><a href="#_transformation_5_palettealpha">Transformation 5: PaletteAlpha</a></li>
+<li><a href="#_transformation_6_palette">Transformation 6: Palette</a></li>
+<li><a href="#_transformation_7_colorbuckets">Transformation 7: ColorBuckets</a></li>
+<li><a href="#_transformation_10_duplicateframe">Transformation 10: DuplicateFrame</a></li>
+<li><a href="#_transformation_11_frameshape">Transformation 11: FrameShape</a></li>
+<li><a href="#_transformation_12_framelookback">Transformation 12: FrameLookback</a></li>
 </ul>
 </li>
 <li><a href="#_maniac_entropy_coding">MANIAC entropy coding</a></li>
@@ -555,7 +565,11 @@ table.CodeRay td.code>pre{padding:0}
 <div class="sectionbody">
 <div class="paragraph">
 <p>The Free Lossless Image Format (FLIF) is a lossless image compression format.
-It supports grayscale, RGB and RGBA, with a color depth from 1 to 16 bits per channel.</p>
+It supports grayscale, RGB and RGBA, with a color depth from 1 to 16 bits per channel.
+Both still images and animations are supported.
+FLIF can handle sparse-color images (e.g. 256 color palettes) effectively.
+It has an interlaced and a non-interlaced mode; unlike PNG, interlacing usually does not come with worse compression.
+In terms of compression, FLIF usually outperforms other lossless compression formats like PNG, lossless WebP, BPG, JPEG 2000, JPEG XR, JPEG-LS, APNG, MNG, or GIF.</p>
 </div>
 <div class="paragraph">
 <p>This document specifies the FLIF16 bitstream, as implemented by version 0.2 of the reference encoder (<a href="https://github.com/FLIF-hub/FLIF" class="bare">https://github.com/FLIF-hub/FLIF</a>), which was released in September 2016.</p>
@@ -583,6 +597,14 @@ It supports grayscale, RGB and RGBA, with a color depth from 1 to 16 bits per ch
 <p>The actual pixel data. This information is encoded using MANIAC entropy coding.</p>
 </li>
 </ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_notational_conventions">Notational conventions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We use '/' to denote integer division.</p>
 </div>
 </div>
 </div>
@@ -736,6 +758,40 @@ Future (non-backwards compatible) revisions of the FLIF format will use a differ
 as long as the chunk is non-critical.
 If a decoder encounters an unknown non-optional chunk, it should fail and produce an error message.</p>
 </div>
+<div class="paragraph">
+<p>The following optional chunks are defined:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Chunk name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Content (after DEFLATE-decompression)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">iCCP</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ICC color profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">raw ICC color profile data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">eXif</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exif metadata</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"Exif\0\0"</code> header followed immediately by a TIFF header and the EXIF data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">eXmp</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">XMP metadata</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">XMP contained within a read-only xpacket with no padding</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -745,11 +801,11 @@ If a decoder encounters an unknown non-optional chunk, it should fail and produc
 <p>From here on, all values are encoded using arithmetic coding.</p>
 </div>
 <div class="paragraph">
-<p>rac24(<em>min</em>,<em>max</em>) denotes an integer in the interval <em>min</em>..<em>max</em> (inclusive), encoded using Uniform symbol coding (see below) and a 24-bit RAC. This encoding is not context-adaptive, and every number in the interval gets a fixed chance (close to a uniform distribution, hence the name).
-rac24(<em>b</em>) denotes an integer of <em>b</em> bits, i.e. it&#8217;s a synonym for rac24(0,2^<em>b</em>-1).</p>
+<p>uni_int(<em>min</em>,<em>max</em>) denotes an integer in the interval <em>min</em>..<em>max</em> (inclusive), encoded using Uniform symbol coding (see below) and a 24-bit RAC. This encoding is not context-adaptive, and every number in the interval gets a fixed chance (close to a uniform distribution, hence the name).
+uni_int(<em>b</em>) denotes an integer of <em>b</em> bits, i.e. it&#8217;s a synonym for rac24(0,2^<em>b</em>-1).</p>
 </div>
 <div class="paragraph">
-<p>rac24_CONTEXT(<em>min</em>,<em>max</em>) denotes an integer in the interval <em>min</em>..<em>max</em> (inclusive), encoded using Near-zero symbol coding (see below) and a 24-bit RAC, where the chance table is given by CONTEXT. This encoding is context-adaptive; numbers are encoded using a zero-sign-exponent-mantissa representation, which favors distributions in which near-zero values have a higher chance.</p>
+<p>nz_int_CONTEXT(<em>min</em>,<em>max</em>) denotes an integer in the interval <em>min</em>..<em>max</em> (inclusive), encoded using Near-zero symbol coding (see below) and a 24-bit RAC, where the chance table is given by CONTEXT. This encoding is context-adaptive; numbers are encoded using a zero-sign-exponent-mantissa representation, which favors distributions in which near-zero values have a higher chance.</p>
 </div>
 <div class="sect2">
 <h3 id="_uniform_symbol_coding">Uniform Symbol Coding</h3>
@@ -767,9 +823,9 @@ until it is a singleton. The following code describes how to decode such an inte
         <span class="predefined-type">int</span> med = min + (max-min)/<span class="integer">2</span>;
 
         <span class="keyword">if</span> (rac.read_bit()) {
-            <span class="keyword">return</span> read_int(mid+<span class="integer">1</span>, max);
+            <span class="keyword">return</span> read_uniform_int(mid+<span class="integer">1</span>, max);
         } <span class="keyword">else</span> {
-            <span class="keyword">return</span> read_int(min, mid);
+            <span class="keyword">return</span> read_uniform_int(min, mid);
         }
     }</code></pre>
 </div>
@@ -931,15 +987,13 @@ while 4095 means that the bit is very likely to be one (the chance is 4095/4096)
           sign = <span class="predefined-constant">true</span>;
         }
 
-
         <span class="comment">// highest possible absolute value</span>
         <span class="directive">const</span> <span class="predefined-type">int</span> amax = (sign? max : -min);
 
         <span class="comment">// highest possible exponent</span>
         <span class="directive">const</span> <span class="predefined-type">int</span> emax = ilog2(amax);
 
-        <span class="comment">// exponent is represented in unary:</span>
-        <span class="comment">// a series of 1s terminated with a 0</span>
+        <span class="comment">// exponent is represented in unary: a series of 1s followed by 0</span>
         <span class="comment">// (the end 0 is dropped if e=emax)</span>
         <span class="predefined-type">int</span> e;
         <span class="keyword">for</span> (e = <span class="integer">0</span> ; e &lt; emax ; e++) {
@@ -1004,49 +1058,49 @@ while 4095 means that the bit is very likely to be one (the chance is 4095/4096)
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(1,16)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(1,16)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Bits per pixel of the channels</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Bpc</strong> == '0': repeat(<strong>nb_channels</strong>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">8 if <strong>Bpc</strong> == '1', 16 if <strong>Bpc</strong> == '2'</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(0,1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(0,1)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Flag: <strong>alpha_zero</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>nb_channels</strong> &gt; 3</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(0,100)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(0,100)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Number of loops</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>nb_frames</strong> &gt; 1</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(0,60_000)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(0,60_000)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Frame delay in ms</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>nb_frames</strong> &gt; 1: repeat(<strong>nb_frames</strong>)</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(0,1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(0,1)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Flag: <strong>has_custom_cutoff_and_alpha</strong></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(1,128)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(1,128)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>cutoff</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>has_custom_cutoff_and_alpha</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(2,128)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(2,128)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>alpha divisor</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>has_custom_cutoff_and_alpha</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">19</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(0,1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(0,1)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Flag: <strong>has_custom_bitchance</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>has_custom_cutoff_and_alpha</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
@@ -1064,13 +1118,13 @@ while 4095 means that the bit is very likely to be one (the chance is 4095/4096)
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(1) = 0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(1) = 0</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Indicator bit: done with transformations</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(0,2)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(0,2)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Invisible pixel predictor</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>alpha_zero</strong> &amp;&amp; interlaced &amp;&amp; alpha range includes zero</p></td>
 <td class="tableblock halign-left valign-top"></td>
@@ -1110,8 +1164,10 @@ while 4095 means that the bit is very likely to be one (the chance is 4095/4096)
 </tr>
 </tbody>
 </table>
-<div class="sect2">
-<h3 id="_transformations">Transformations</h3>
+<h3 id="_transformations" class="discrete">Transformations</h3>
+<div class="paragraph">
+<p>For each transformation:</p>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 50%;">
@@ -1125,11 +1181,11 @@ while 4095 means that the bit is very likely to be one (the chance is 4095/4096)
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(1) = 1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(1) = 1</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Indicator bit: not done yet</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(0,13)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(0,13)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Transformation identifier</p></td>
 </tr>
 <tr>
@@ -1156,8 +1212,22 @@ while 4095 means that the bit is very likely to be one (the chance is 4095/4096)
 </div>
 <div class="paragraph">
 <p>Initially, pixel values are assumed to be in the range 0..2^(bit_depth); this range can be modified by transformations.
-We&#8217;ll use <strong>range(<em>channel</em>).min</strong> and <strong>range(<em>channel</em>).max</strong> to denote the global minimum and maximum value of a particular channel. We also use a potentially more accurate (narrow) conditional range <strong>crange(<em>channel</em>,<em>values</em>)</strong> to denote the range of a pixel value in channel <strong><em>channel</em></strong>, <em>given that the pixel values in previously encoded channels are</em> <strong><em>values</em></strong>. Initially, the conditional ranges are simply equal to the global range, but transformations might change that.</p>
+We&#8217;ll use <strong>range(<em>channel</em>).min</strong> and <strong>range(<em>channel</em>).max</strong> to denote the global minimum and maximum value of a particular channel.</p>
 </div>
+<div class="paragraph">
+<p>We also use a potentially more accurate (narrow) conditional range <strong>crange(<em>channel</em>,<em>values</em>)</strong> to denote
+the range of a pixel value in channel <strong><em>channel</em></strong>, <em>given that the pixel values in previously encoded channels are</em> <strong><em>values</em></strong>.
+Initially, the conditional ranges are simply equal to the global range, but transformations might change that.</p>
+</div>
+<div class="paragraph">
+<p>Finally, we define a function <strong>snap(<em>channel</em>,<em>values</em>,<em>x</em>)</strong> which given a pixel value <strong><em>x</em></strong> for channel <strong><em>channel</em></strong>
+and pixel values <strong><em>values</em></strong> in previously encoded channels, returns a 'valid' value as close as possible to <strong><em>x</em></strong>.
+Usually, <strong>snap(<em>channel</em>,<em>values</em>,<em>x</em>)</strong> simply clamps <strong><em>x</em></strong> to the conditional range <strong>crange(<em>channel</em>,<em>values</em>)</strong>,
+but the ColorBuckets transformation changes that behavior.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Example</div>
 <div class="paragraph">
 <p>As a typical example, consider 8-bit RGBA to which the YCoCg transformation gets applied:</p>
 </div>
@@ -1212,62 +1282,417 @@ We&#8217;ll use <strong>range(<em>channel</em>).min</strong> and <strong>range(<
 <div class="paragraph">
 <p>In this example, the conditional ranges also change: e.g. <strong>crange(1,2)</strong> (the range for Co given that Y=2) happens to be -7..7.</p>
 </div>
-<div class="sect3">
-<h4 id="_transformation_0_channelcompact">Transformation 0: ChannelCompact</h4>
-
+</div>
+</div>
+<div class="paragraph">
+<p>In the following descriptions of transformations, we use <strong>orig_range</strong>, <strong>orig_crange</strong>, <strong>orig_snap</strong> to denote
+the original ranges and snap function (the initial ones, or the ones resulting from the previous transformation in the chain).
+We use <strong>new_range</strong>, <strong>new_crange</strong>, <strong>new_snap</strong> to denote the updated ranges and snap function.</p>
+</div>
+<div class="paragraph">
+<p>In part 4 we will use <strong>range</strong>, <strong>crange</strong> and <strong>snap</strong> to denote the final ranges and snap functions, i.e. after applying all
+transformations.</p>
+</div>
+<div class="paragraph">
+<p>We will now describe the transformations and their encoding in more detail.</p>
+</div>
+<div class="sect2">
+<h3 id="_transformation_0_channelcompact">Transformation 0: ChannelCompact</h3>
+<div class="paragraph">
+<p>The ChannelCompact transformation looks at each channel independently, and reduces its range
+by eliminating values that do not actually occur in the image.</p>
+</div>
+<div class="paragraph">
+<p>To be able to reconstruct the original values, the mapping from the reduced range to the original
+range is encoded. Near-zero symbol coding is used, with a single context which we&#8217;ll call A.</p>
+</div>
+<div class="paragraph">
+<p>The information is encoded as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>For each channel <strong>c</strong> :</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>new_range(c).max</strong> = nz_int_A(0,<strong>orig_range(c).max</strong>-<strong>orig_range(c).max</strong>)</p>
+</li>
+<li>
+<p><strong>min</strong> = <strong>orig_range(c).min</strong></p>
+</li>
+<li>
+<p>For <strong>i</strong> = 0..<strong>new_range(c).max</strong>-1 :</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>decompacted(i)</strong> = <strong>min</strong> + nz_int_A(0, <strong>orig_range(c).max</strong>-<strong>min</strong>+<strong>new_range(c).max</strong>-<strong>i</strong>)</p>
+</li>
+<li>
+<p><strong>min</strong> = <strong>decompacted(i)</strong>+1</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The effect of this transformation is as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>new_range(c).min = new_crange(c,&#8230;&#8203;).min = 0</strong></p>
+</li>
+<li>
+<p><strong>new_range(c).max = new_crange(c,&#8230;&#8203;).max</strong> is explicitly encoded</p>
+</li>
+<li>
+<p><strong>new_snap</strong> is the default snap function (simple clamping)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To reverse the transformation (after decoding the pixel values) :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>For each channel <strong>c</strong> :</p>
+<div class="ulist">
+<ul>
+<li>
+<p>For every pixel value <strong>v</strong> :</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Set <strong>v</strong> = <strong>decompacted(v)</strong></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_transformation_1_ycocg">Transformation 1: YCoCg</h3>
+<div class="paragraph">
+<p>The YCoCg transformation converts the colorspace from RGB to YCoCg.
+No information has to be encoded for this (besides the identifier of the transformation).</p>
+</div>
+<div class="paragraph">
+<p>The transformation only affects the first three channels (0,1,2).</p>
 </div>
 <div class="sect3">
-<h4 id="_transformation_1_ycocg">Transformation 1: YCoCg</h4>
-
+<h4 id="_pixel_transformation">Pixel transformation</h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Channel</th>
+<th class="tableblock halign-left valign-top">Original meaning</th>
+<th class="tableblock halign-left valign-top">New meaning</th>
+<th class="tableblock halign-left valign-top">Forward transform</th>
+<th class="tableblock halign-left valign-top">Reverse transform</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Red (R)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Luma (Y)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Y = (((R+B)&gt;&gt;1) + G)&gt;&gt;1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">R = Co + Y + ((1-Cg)&gt;&gt;1) - (Co&gt;&gt;1)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Green (G)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chroma orange (Co)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Co = R - B</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">G = Y - ((-Cg)&gt;&gt;1)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Blue (B)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chroma green (Cg)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cg = G - ((R+B)&gt;&gt;1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">B = Y + ((1-Cg)&gt;&gt;1) - (Co&gt;&gt;1)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+&gt;&gt;1 denotes arithmetic right shift, which corresponds to dividing by two <strong>rounding down</strong>.
+For positive integers this is the same as /2, but for negative integers it is not, e.g. -1 / 2 = 0 while -1 &gt;&gt; 1 = -1.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Luma (Y) corresponds to roughly 50% green, 25% red, 25% blue. Chroma orange (Co) is positive for colors near orange (red, orange, yellow),
+and negative for colors near blue. Chroma green (Cg) is positive for colors near green and negative for colors near purple.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The YCoCg transformation tends to decorrelate the channels, which helps to improve compression.
+For example, for grayscale images, i.e. images where R=G=B, the result of the YCoCg transform is Y=R (=G=B), Co=Cg=0.
+Human perception is more sensitive to luma than it is to chroma. For this reason, in interlaced mode,
+the default zoomlevel/channel ordering (see below) gives priority to the luma channel; this results in
+partial decodes (progressive previews) which are effectively chroma subsampled.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_transformation_2_reserved_unused">Transformation 2: reserved (unused)</h4>
+<h4 id="_new_ranges">New ranges</h4>
+<div class="paragraph">
+<p>Define <em>origmax4</em> to be equal to max(<strong>orig_range(0).max</strong>,<strong>orig_range(1).max</strong>,<strong>orig_range(2).max</strong>)/4+1
+and <em>newmax</em> to be equal to 4 * (<em>origmax4</em>) - 1.
+In the most common case where the three channels have the range 0..255, this evaluates to <em>origmax4</em> = 64 and <em>newmax</em> = 255.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Channel number <strong>c</strong></th>
+<th class="tableblock halign-left valign-top">Original meaning</th>
+<th class="tableblock halign-left valign-top">New meaning</th>
+<th class="tableblock halign-left valign-top"><strong>new_range(c)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Red (R)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Luma (Y)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..<em>newmax</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Green (G)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chroma orange (Co)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-<em>newmax</em>..<em>newmax</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Blue (B)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chroma green (Cg)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-<em>newmax</em>..<em>newmax</em></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Unlike the RGB color space, not every coordinate in the YCoCg color space corresponds
+to an actual color. In particular, the range for Co and Cg is much smaller for near-black and
+near-white colors than for intermediate luma values:</p>
+</div>
+<div class="videoblock">
+<div class="content">
+<iframe width="512" height="512" src="https://www.youtube.com/embed/-v-xoKZBnhI?rel=0&amp;modestbranding=1" frameborder="0" allowfullscreen></iframe>
+</div>
+</div>
+<div class="paragraph">
+<p>For this reason, the conditional range function <strong>crange</strong> is updated to reflect this.
+The conditional range function is updated as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>new_crange(0)</strong> = <strong>new_range(0)</strong></p>
+</li>
+<li>
+<p><strong>new_crange(1,<em>yval</em>).min</strong> =</p>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+-3 + 4 * <em>yval</em>        
+</td>
+<td class="hdlist2">
+<p>if <em>yval</em> &lt; <em>origmax4</em> - 1</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+4 * (<em>yval</em>-<em>newmax</em>)  
+</td>
+<td class="hdlist2">
+<p>if <em>yval</em> &gt; 3 * <em>origmax4</em> - 1</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+-<em>newmax</em>              
+</td>
+<td class="hdlist2">
+<p>otherwise</p>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p><strong>new_crange(1,<em>yval</em>).max</strong> =</p>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+3 + 4 * <em>yval</em>         
+</td>
+<td class="hdlist2">
+<p>if <em>yval</em> &lt; <em>origmax4</em> - 1</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+4 * (<em>newmax</em>-<em>yval</em>)  
+</td>
+<td class="hdlist2">
+<p>if <em>yval</em> &gt; 3 * <em>origmax4</em> - 1</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>newmax</em>               
+</td>
+<td class="hdlist2">
+<p>otherwise</p>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p><strong>new_crange(2,<em>yval</em>,<em>coval</em>).min</strong> =</p>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+-2 - 2 * <em>yval</em>        
+</td>
+<td class="hdlist2">
+<p>if <em>yval</em> &lt; <em>origmax4</em> - 1</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+-2 * (<em>newmax</em>-<em>yval</em>) + 2 * ((abs(<em>coval</em>)+1)/2)  
+</td>
+<td class="hdlist2">
+<p>if <em>yval</em> &gt; 3 * <em>origmax4</em> - 1</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+min(2 * <em>yval</em> + 1, 2 * <em>newmax</em> - 2 * <em>yval</em> - 2 * abs(<em>coval</em>)+1)/2      
+</td>
+<td class="hdlist2">
+<p>otherwise</p>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p><strong>new_crange(2,<em>yval</em>,<em>coval</em>).max</strong> =</p>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+1 + 2 * <em>yval</em> - 2 * (abs(<em>coval</em>)/2)        
+</td>
+<td class="hdlist2">
+<p>if <em>yval</em> &lt; <em>origmax4</em> - 1</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+2 * (<em>newmax</em>-<em>yval</em>)                        
+</td>
+<td class="hdlist2">
+<p>if <em>yval</em> &gt; 3 * <em>origmax4</em> - 1</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+min(2 * (<em>yval</em>- <em>newmax</em>), - 2 * <em>yval</em> - 1 + 2* (abs(<em>coval</em>)/2))            
+</td>
+<td class="hdlist2">
+<p>otherwise</p>
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+<h3 id="_transformation_2_reserved_unused" class="discrete">Transformation 2: reserved (unused)</h3>
+<div class="paragraph">
+<p>Transformation identifier 2 is not used. It is reserved for future extensions that support transformations
+to other color spaces like YCbCr.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_transformation_3_permuteplanes">Transformation 3: PermutePlanes</h3>
 
 </div>
-<div class="sect3">
-<h4 id="_transformation_3_permuteplanes">Transformation 3: PermutePlanes</h4>
+<div class="sect2">
+<h3 id="_transformation_4_bounds">Transformation 4: Bounds</h3>
 
 </div>
-<div class="sect3">
-<h4 id="_transformation_4_bounds">Transformation 4: Bounds</h4>
+<div class="sect2">
+<h3 id="_transformation_5_palettealpha">Transformation 5: PaletteAlpha</h3>
 
 </div>
-<div class="sect3">
-<h4 id="_transformation_5_palettealpha">Transformation 5: PaletteAlpha</h4>
+<div class="sect2">
+<h3 id="_transformation_6_palette">Transformation 6: Palette</h3>
 
 </div>
-<div class="sect3">
-<h4 id="_transformation_6_palette">Transformation 6: Palette</h4>
+<div class="sect2">
+<h3 id="_transformation_7_colorbuckets">Transformation 7: ColorBuckets</h3>
+<h3 id="_transformation_8_reserved_unused" class="discrete">Transformation 8: reserved (unused)</h3>
+<h3 id="_transformation_9_reserved_unused" class="discrete">Transformation 9: reserved (unused)</h3>
+</div>
+<div class="sect2">
+<h3 id="_transformation_10_duplicateframe">Transformation 10: DuplicateFrame</h3>
 
 </div>
-<div class="sect3">
-<h4 id="_transformation_7_colorbuckets">Transformation 7: ColorBuckets</h4>
+<div class="sect2">
+<h3 id="_transformation_11_frameshape">Transformation 11: FrameShape</h3>
 
 </div>
-<div class="sect3">
-<h4 id="_transformation_8_reserved_unused">Transformation 8: reserved (unused)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_transformation_9_reserved_unused">Transformation 9: reserved (unused)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_transformation_10_duplicateframe">Transformation 10: DuplicateFrame</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_transformation_11_frameshape">Transformation 11: FrameShape</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_transformation_12_framelookback">Transformation 12: FrameLookback</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_transformation_13_reserved_unused">Transformation 13: reserved (unused)</h4>
-
-</div>
+<div class="sect2">
+<h3 id="_transformation_12_framelookback">Transformation 12: FrameLookback</h3>
+<h3 id="_transformation_13_reserved_unused" class="discrete">Transformation 13: reserved (unused)</h3>
 </div>
 </div>
 </div>
@@ -1391,12 +1816,12 @@ Then the MANIAC tree is encoded, and then the rest of the zoomlevels are encoded
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(0..<strong>max_zl</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(0..<strong>max_zl</strong>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Number of the first MANIAC-encoded zoomlevel: <strong>first_zl</strong></p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(range(<em>c</em>).min,range(<em>c</em>).max)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(range(<em>c</em>).min,range(<em>c</em>).max)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">pixel value of the top-left (0,0) pixel of channel <em>c</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">repeat(<em>c</em> in 0..<strong>nb_channels</strong>-1)</p></td>
 </tr>
@@ -1462,12 +1887,12 @@ Then the MANIAC tree is encoded, and then the rest of the zoomlevels are encoded
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(0,1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(0,1)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Boolean: <strong>default_order</strong></p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(-1,2)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(-1,2)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Pixel predictors <strong>pred[channel]</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">repeat(<strong>nb_channels</strong>)</p></td>
 </tr>
@@ -1493,7 +1918,7 @@ Then the MANIAC tree is encoded, and then the rest of the zoomlevels are encoded
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(0,<strong>nb_channels</strong>-1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(0,<strong>nb_channels</strong>-1)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Channel <strong>c</strong> to be encoded</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">not <strong>default_order</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">given by default order</p></td>
@@ -1505,7 +1930,7 @@ Then the MANIAC tree is encoded, and then the rest of the zoomlevels are encoded
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(0,2)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(0,2)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Pixel predictor <strong>p</strong> to use</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>pred[c]</strong> == -1</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>pred[c]</strong></p></td>
@@ -1636,7 +2061,7 @@ In interlaced mode, progressive decoding will give you a blurry / low resolution
 <p>If the prediction is any good, these numbers tend to be close to zero</p>
 </li>
 <li>
-<p>To decode the value: rac24_MANIAC<sub><strong>c</strong>,<em>pvec</em></sub>(<em>min</em>-<em>guess</em>, <em>max</em>-<em>guess</em>) + <em>guess</em></p>
+<p>To decode the value: nz_int_MANIAC<sub><strong>c</strong>,<em>pvec</em></sub>(<em>min</em>-<em>guess</em>, <em>max</em>-<em>guess</em>) + <em>guess</em></p>
 </li>
 </ul>
 </div>
@@ -1704,10 +2129,15 @@ As an optimization, it is safe to simply skip pixels from a constant channel, th
 <h3 id="_maniac_tree_encoding">MANIAC tree encoding</h3>
 <div class="paragraph">
 <p>There is one tree per non-trivial channel (a channel is trivial if its range is a singleton or if it doesn&#8217;t exist).
-The trees are encoded independently and in a recursive (depth-first) way, as follows:</p>
+The trees are encoded one after another and in a recursive (depth-first) way, as follows:</p>
 </div>
 <div class="paragraph">
-<p><strong>nb_properties</strong> depends on the channel, the number of channels, and the encoding method (interlaced or non-interlaced).</p>
+<p><strong>nb_properties</strong> depends on the channel, the number of channels, and the encoding method (interlaced or non-interlaced),
+as specified above. The range of each property is maintained during tree traversal. The initial property ranges
+<strong>prange[<em>property</em>]</strong> are defined above; these are narrowed down when going to a deeper node in the tree.</p>
+</div>
+<div class="paragraph">
+<p>For each channel <em>c</em>, three different contexts are used: we&#8217;ll just call them A<sub><em>c</em></sub>, B<sub><em>c</em></sub> and C<sub><em>c</em></sub>.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -1724,35 +2154,45 @@ The trees are encoded independently and in a recursive (depth-first) way, as fol
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24_A(0,<strong>nb_properties</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nz_int_A<sub><em>c</em></sub>(0,<strong>nb_properties</strong>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0=leaf node, &gt; 0: <em>property</em>+1</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24_B(1,512)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nz_int_B<sub><em>c</em></sub>(1,512)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">node counter</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">not a leaf node</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24_C(range[<em>property</em>].min,range[<em>property</em>].max-1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nz_int_C<sub><em>c</em></sub>(<strong>prange[<em>property</em>].min</strong>,<strong>prange[<em>property</em>].max</strong>-1)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>test_value</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">not a leaf node</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">recursive encoding of left branch</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">where range[<em>property</em>].min = <em>test_value</em>+1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">where <strong>prange[<em>property</em>].min</strong> = <em>test_value</em>+1</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">not a leaf node</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">recursive encoding of right branch</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">where range[<em>property</em>].max = <em>test_value</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">where <strong>prange[<em>property</em>].max</strong> = <em>test_value</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">not a leaf node</p></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>From this description, the MANIAC trees can be reconstructed. Leaf nodes have a counter value that is effectively infinity
+(they can never be turned into a decision node).</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_checksum">Checksum</h3>
+<div class="paragraph">
+<p>At the very end of the bitstream, there is an optional checksum to verify the integrity of the file.</p>
+</div>
+<div class="paragraph">
+<p>TODO: describe how the checksum is computed</p>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1768,17 +2208,17 @@ The trees are encoded independently and in a recursive (depth-first) way, as fol
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(1)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Boolean: <strong>have_checksum</strong></p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(16)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(16)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Most significant 16 bits of checksum</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>have_checksum</strong></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">rac24(16)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uni_int(16)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Least significant 16 bits of checksum</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>have_checksum</strong></p></td>
 </tr>
@@ -1790,7 +2230,7 @@ The trees are encoded independently and in a recursive (depth-first) way, as fol
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-12-06 20:43:19 CET
+Last updated 2016-12-08 12:03:55 CET
 </div>
 </div>
 </body>
