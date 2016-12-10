@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -529,6 +530,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_part_2_metadata">Part 2: metadata</a></li>
 <li><a href="#_symbol_encoding">Symbol encoding</a>
 <ul class="sectlevel2">
+<li><a href="#_range_encoder">Range encoder</a></li>
 <li><a href="#_uniform_symbol_coding">Uniform Symbol Coding</a></li>
 <li><a href="#_near_zero_symbol_coding">Near-zero symbol coding</a></li>
 </ul>
@@ -802,16 +804,29 @@ If a decoder encounters an unknown non-optional chunk, it should fail and produc
 </div>
 <div class="paragraph">
 <p>uni_int(<em>min</em>,<em>max</em>) denotes an integer in the interval <em>min</em>..<em>max</em> (inclusive), encoded using Uniform symbol coding (see below) and a 24-bit RAC. This encoding is not context-adaptive, and every number in the interval gets a fixed chance (close to a uniform distribution, hence the name).
-uni_int(<em>b</em>) denotes an integer of <em>b</em> bits, i.e. it&#8217;s a synonym for rac24(0,2^<em>b</em>-1).</p>
+uni_int(<em>b</em>) denotes an integer of <em>b</em> bits, i.e. it&#8217;s a synonym for uni_int(0,2^<em>b</em>-1).</p>
 </div>
 <div class="paragraph">
-<p>nz_int_CONTEXT(<em>min</em>,<em>max</em>) denotes an integer in the interval <em>min</em>..<em>max</em> (inclusive), encoded using Near-zero symbol coding (see below) and a 24-bit RAC, where the chance table is given by CONTEXT. This encoding is context-adaptive; numbers are encoded using a zero-sign-exponent-mantissa representation, which favors distributions in which near-zero values have a higher chance.</p>
+<p>nz_int_<strong>CONTEXT</strong>(<em>min</em>,<em>max</em>) denotes an integer in the interval <em>min</em>..<em>max</em> (inclusive), encoded using Near-zero symbol coding (see below) and a 24-bit RAC, where the chance table is given by <strong>CONTEXT</strong>. This encoding is context-adaptive, i.e. the chance table gets updated when encoding or decoding a number. Numbers are encoded using a zero-sign-exponent-mantissa representation, which favors distributions in which near-zero values have a higher chance (hence the name).</p>
+</div>
+<div class="sect2">
+<h3 id="_range_encoder">Range encoder</h3>
+<div class="paragraph">
+<p>TODO: describe the 24-bit RAC and the 12-bit chances.</p>
+</div>
+<div class="sect3">
+<h4 id="_chance_table_update">Chance table update</h4>
+<div class="paragraph">
+<p>TODO: describe how <strong>cutoff</strong> and <strong>alpha</strong> influence this.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_uniform_symbol_coding">Uniform Symbol Coding</h3>
 <div class="paragraph">
-<p>An integer encoded with Uniform symbol coding uses a series of 50% chance bits to recursively narrow down the input interval
-until it is a singleton. The following code describes how to decode such an integer:</p>
+<p>An integer encoded with Uniform symbol coding uses a series of 50% chance bits (chance is 2048/4096, non-adaptive)
+to recursively narrow down the input interval until it is a singleton.
+The following code describes how to decode such an integer:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -855,6 +870,74 @@ Every bit position of this representation has its own RAC context (so their chan
 not just depending on their position but also depending on the sign.
 Chances are represented as 12-bit numbers (1..4095), where 1 means that the bit is very likely to be zero (it has 1/4096 chance of being one),
 while 4095 means that the bit is very likely to be one (the chance is 4095/4096).</p>
+</div>
+<div class="paragraph">
+<p>The following code describes how to decode an integer in this representation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c">    <span class="comment">// assumption: min &lt;= 0 &lt;= max</span>
+    <span class="predefined-type">int</span> read_nearzero_int(<span class="predefined-type">int</span> min, <span class="predefined-type">int</span> max) {
+
+        <span class="keyword">if</span> (min == max) <span class="keyword">return</span> min;
+
+        <span class="keyword">if</span> (rac.read(ZERO)) <span class="keyword">return</span> <span class="integer">0</span>;
+
+        <span class="predefined-type">bool</span> sign; <span class="comment">// true = positive, false = negative</span>
+        <span class="keyword">if</span> (min &lt; <span class="integer">0</span>) {
+          <span class="keyword">if</span> (max &gt; <span class="integer">0</span>) {
+            <span class="comment">// only actually read the sign bit if both signs are possible</span>
+            sign = rac.read(SIGN);
+          } <span class="keyword">else</span> {
+            <span class="comment">// max &lt;= 0 and the number is not zero, so it is negative</span>
+            sign = <span class="predefined-constant">false</span>;
+          }
+        } <span class="keyword">else</span> {
+          <span class="comment">// min &gt;= 0 and the number is not zero, so it is positive</span>
+          sign = <span class="predefined-constant">true</span>;
+        }
+
+        <span class="comment">// highest possible absolute value</span>
+        <span class="directive">const</span> <span class="predefined-type">int</span> amax = (sign? max : -min);
+
+        <span class="comment">// highest possible exponent</span>
+        <span class="directive">const</span> <span class="predefined-type">int</span> emax = ilog2(amax);
+
+        <span class="comment">// exponent is represented in unary: a series of 1s followed by 0</span>
+        <span class="comment">// (the end 0 is dropped if e=emax)</span>
+        <span class="predefined-type">int</span> e;
+        <span class="keyword">for</span> (e = <span class="integer">0</span> ; e &lt; emax ; e++) {
+            <span class="keyword">if</span> (rac.read(EXP(e,sign)) <span class="keyword">break</span>;
+        }
+
+        <span class="comment">// the first mantissa bit is always 1</span>
+        <span class="predefined-type">int</span> have = (<span class="integer">1</span> &lt;&lt; e);
+        <span class="comment">// if all other mantissa bits are 1, then the total is have+left</span>
+        <span class="predefined-type">int</span> left = have-<span class="integer">1</span>;
+
+        <span class="comment">// read mantissa bits from most-significant to least-significant</span>
+        <span class="keyword">for</span> (<span class="predefined-type">int</span> pos = e; pos&gt;<span class="integer">0</span>;) {
+            left &gt;&gt;= <span class="integer">1</span>; pos--;
+            <span class="comment">// if the bit is 1, then the value will be at least minabs1</span>
+            <span class="predefined-type">int</span> minabs1 = have | (<span class="integer">1</span>&lt;&lt;pos);
+            <span class="comment">// if the bit is 0, then the value will be at most maxabs0</span>
+            <span class="predefined-type">int</span> maxabs0 = have | left;
+            <span class="keyword">if</span> (minabs1 &gt; amax) {
+                <span class="comment">// 1-bit is impossible (would bump value above maximum),</span>
+                <span class="comment">// so assume the bit is 0 without reading it</span>
+            } <span class="keyword">else</span> <span class="keyword">if</span> (maxabs0 &gt;= <span class="integer">1</span>) {
+                <span class="comment">// 0-bit and 1-bit are both possible,</span>
+                <span class="comment">// so we read the bit and adjust what we have if it is a 1</span>
+                <span class="keyword">if</span> (rac.read(MANT(pos))) have = minabs1;
+            } <span class="keyword">else</span> {
+                <span class="comment">// 0-bit is impossible (would make the value zero),</span>
+                <span class="comment">// so assume the bit is 1 without reading it</span>
+                have = minabs1;
+            }
+        }
+        <span class="keyword">return</span> (sign ? have : -have);
+    }</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>The chances are initialized as follows:</p>
@@ -961,74 +1044,6 @@ while 4095 means that the bit is very likely to be one (the chance is 4095/4096)
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p>The following code describes how to decode an integer in this representation:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="c">    <span class="comment">// assumption: min &lt;= 0 &lt;= max</span>
-    <span class="predefined-type">int</span> read_nearzero_int(<span class="predefined-type">int</span> min, <span class="predefined-type">int</span> max) {
-
-        <span class="keyword">if</span> (min == max) <span class="keyword">return</span> min;
-
-        <span class="keyword">if</span> (rac.read(ZERO)) <span class="keyword">return</span> <span class="integer">0</span>;
-
-        <span class="predefined-type">bool</span> sign; <span class="comment">// true = positive, false = negative</span>
-        <span class="keyword">if</span> (min &lt; <span class="integer">0</span>) {
-          <span class="keyword">if</span> (max &gt; <span class="integer">0</span>) {
-            <span class="comment">// only actually read the sign bit if both signs are possible</span>
-            sign = rac.read(SIGN);
-          } <span class="keyword">else</span> {
-            <span class="comment">// max &lt;= 0 and the number is not zero, so it is negative</span>
-            sign = <span class="predefined-constant">false</span>;
-          }
-        } <span class="keyword">else</span> {
-          <span class="comment">// min &gt;= 0 and the number is not zero, so it is positive</span>
-          sign = <span class="predefined-constant">true</span>;
-        }
-
-        <span class="comment">// highest possible absolute value</span>
-        <span class="directive">const</span> <span class="predefined-type">int</span> amax = (sign? max : -min);
-
-        <span class="comment">// highest possible exponent</span>
-        <span class="directive">const</span> <span class="predefined-type">int</span> emax = ilog2(amax);
-
-        <span class="comment">// exponent is represented in unary: a series of 1s followed by 0</span>
-        <span class="comment">// (the end 0 is dropped if e=emax)</span>
-        <span class="predefined-type">int</span> e;
-        <span class="keyword">for</span> (e = <span class="integer">0</span> ; e &lt; emax ; e++) {
-            <span class="keyword">if</span> (rac.read(EXP(e,sign)) <span class="keyword">break</span>;
-        }
-
-        <span class="comment">// the first mantissa bit is always 1</span>
-        <span class="predefined-type">int</span> have = (<span class="integer">1</span> &lt;&lt; e);
-        <span class="comment">// if all other mantissa bits are 1, then the total is have+left</span>
-        <span class="predefined-type">int</span> left = have-<span class="integer">1</span>;
-
-        <span class="comment">// read mantissa bits from most-significant to least-significant</span>
-        <span class="keyword">for</span> (<span class="predefined-type">int</span> pos = e; pos&gt;<span class="integer">0</span>;) {
-            left &gt;&gt;= <span class="integer">1</span>; pos--;
-            <span class="comment">// if the bit is 1, then the value will be at least minabs1</span>
-            <span class="predefined-type">int</span> minabs1 = have | (<span class="integer">1</span>&lt;&lt;pos);
-            <span class="comment">// if the bit is 0, then the value will be at most maxabs0</span>
-            <span class="predefined-type">int</span> maxabs0 = have | left;
-            <span class="keyword">if</span> (minabs1 &gt; amax) {
-                <span class="comment">// 1-bit is impossible (would bump value above maximum),</span>
-                <span class="comment">// so assume the bit is 0 without reading it</span>
-            } <span class="keyword">else</span> <span class="keyword">if</span> (maxabs0 &gt;= <span class="integer">1</span>) {
-                <span class="comment">// 0-bit and 1-bit are both possible,</span>
-                <span class="comment">// so we read the bit and adjust what we have if it is a 1</span>
-                <span class="keyword">if</span> (rac.read(MANT(pos))) have = minabs1;
-            } <span class="keyword">else</span> {
-                <span class="comment">// 0-bit is impossible (would make the value zero),</span>
-                <span class="comment">// so assume the bit is 1 without reading it</span>
-                have = minabs1;
-            }
-        }
-        <span class="keyword">return</span> (sign ? have : -have);
-    }</code></pre>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -1387,7 +1402,8 @@ range is encoded. Near-zero symbol coding is used, with a single context which w
 No information has to be encoded for this (besides the identifier of the transformation).</p>
 </div>
 <div class="paragraph">
-<p>The transformation only affects the first three channels (0,1,2).</p>
+<p>The transformation only affects the first three channels (0,1,2).
+It is not allowed to be used if <strong>nb_channels</strong> = 1.</p>
 </div>
 <div class="sect3">
 <h4 id="_pixel_transformation">Pixel transformation</h4>
@@ -1672,7 +1688,146 @@ to other color spaces like YCbCr.</p>
 </div>
 <div class="sect2">
 <h3 id="_transformation_3_permuteplanes">Transformation 3: PermutePlanes</h3>
-
+<div class="paragraph">
+<p>The PermutePlanes transformation reorders (permutes) the channels; optionally it also subtracts the values of the new channel 0
+from the values of channels 1 and 2. This transformation is useful if for some reason the YCoCg transformation is not used:
+it can e.g. be used to transform RGB to G (R-G) (B-G).</p>
+</div>
+<div class="paragraph">
+<p>This transformation is not allowed to be used in conjunction with the YCoCg transformation; it is also not allowed to be used if <strong>nb_channels</strong> = 1. Also, if <strong>alpha_zero</strong> is true, then channel 3 (Alpha) is not allowed to be permuted to a different channel number.</p>
+</div>
+<div class="paragraph">
+<p>There are two main reasons to do a channel reordering: better compression (the order matters for compression since the values of previously encoded channels are used in the MANIAC properties, see below), and better progressive previews (e.g. Green is perceptually more important than Red and Blue, so it makes sense to encode it first). Additionally, subtracting channel 0 from the other channels is a simple form of channel decorrelation; usually not as good as the YCoCg transformation though.</p>
+</div>
+<div class="paragraph">
+<p>We denote the permutation used by PermutePlanes with <strong>p</strong>, where <strong>p(nc)=oc</strong> means that the new channel number <strong>nc</strong> corresponds to the old channel number <strong>oc</strong>.</p>
+</div>
+<div class="paragraph">
+<p>Without subtraction, the forward transformation looks as follows:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Channel number <strong>c</strong></th>
+<th class="tableblock halign-left valign-top">Original pixel value</th>
+<th class="tableblock halign-left valign-top">New pixel value (no Subtract)</th>
+<th class="tableblock halign-left valign-top"><strong>new_range(c)</strong> (no Subtract)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>0</sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(0)</strong></sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(0))</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>1</sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(1)</strong></sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(1))</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>2</sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(2)</strong></sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(2))</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>3</sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(3)</strong></sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(3))</strong></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>With subtraction, the forward transformation looks as follows:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Channel number <strong>c</strong></th>
+<th class="tableblock halign-left valign-top">Original pixel value</th>
+<th class="tableblock halign-left valign-top">New pixel value (with Subtract)</th>
+<th class="tableblock halign-left valign-top"><strong>new_range(c)</strong> (with Subtract)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>0</sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(0)</strong></sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(0))</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>1</sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(1)</strong></sub></em>-<em>v<sub><strong>p(0)</strong></sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(1)).min</strong>-<strong>range(p(0)).max</strong> to <strong>range(p(1)).max</strong>-<strong>range(p(0)).min</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>2</sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(2)</strong></sub></em>-<em>v<sub><strong>p(0)</strong></sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(2)).min</strong>-<strong>range(p(0)).max</strong> to <strong>range(p(2)).max</strong>-<strong>range(p(0)).min</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>3</sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(3)</strong></sub></em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(perm(3))</strong></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The reverse transformation can easily be derived from this: given input values <em>(in<sub>0</sub>,in<sub>1</sub>,in<sub>2</sub>,in<sub>3</sub>)</em>, the output values are given by <em>out<sub><strong>p(c)</strong></sub> = in<sub><strong>c</strong></sub></em> if there is no Subtract or <strong>c</strong> is 0 or 3, and by
+<em>out<sub><strong>p(c)</strong></sub> = in<sub><strong>c</strong></sub> + in<sub>0</sub></em> if there is Subtract and <strong>c</strong> is 1 or 2.</p>
+</div>
+<div class="paragraph">
+<p>To encode the parameters of this transformation, near-zero symbol coding is used, with a single context which we will call A.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nz_int_A(0,1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean: <strong>Subtract</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nz_int_A(0,<strong>nb_channels</strong>-1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>p(c)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">repeat: <strong>c</strong> from 0 to <strong>nb_channels</strong>-1</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The decoder has to check that <strong>p</strong> actually describes a permutation, i.e. it is a bijection (no two input channels map to the same output channel).</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_transformation_4_bounds">Transformation 4: Bounds</h3>
@@ -2115,11 +2270,248 @@ As an optimization, it is safe to simply skip pixels from a constant channel, th
 <h4 id="_pixel_predictors">Pixel predictors</h4>
 <div class="sect4">
 <h5 id="_non_interlaced_mode">Non-interlaced mode</h5>
-
+<div class="paragraph">
+<p>Assume we have to predict pixel <strong>X</strong> in channel <strong>c</strong> given its previously decoded neighbors:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>T</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X</strong></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The predicted value for <strong>X</strong> is the median of the following three values:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>L</strong> + <strong>T</strong> - <strong>TL</strong></p>
+</li>
+<li>
+<p><strong>L</strong></p>
+</li>
+<li>
+<p><strong>T</strong></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Border conditions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If <strong>X</strong> is at column 0 (so it has no left neighbor <strong>L</strong>), then we set <strong>L</strong> = <strong>range(c).min</strong>, <em>except</em> when <strong>alpha_zero</strong> is true, <strong>c</strong> &lt; 3 and the alpha value at the position of pixel <strong>X</strong> is zero; in that case we set <strong>L</strong> = (<strong>range(c).min</strong>+<strong>range(c).max</strong>)/2.</p>
+</li>
+<li>
+<p>If <strong>X</strong> is at row 0 (so it has no top neighbor <strong>T</strong>), then we set <strong>T</strong> = <strong>TL</strong> = <strong>L</strong>.</p>
+</li>
+<li>
+<p>If <strong>X</strong> is at row &gt; 0 and column 0, then <strong>TL</strong> = <strong>T</strong>.</p>
+</li>
+</ul>
+</div>
 </div>
 <div class="sect4">
 <h5 id="_interlaced_mode">Interlaced mode</h5>
-
+<div class="sect5">
+<h6 id="_horizontal_zoomlevel_even_numbered">Horizontal zoomlevel (even-numbered)</h6>
+<div class="paragraph">
+<p>Assume we have to predict pixel <strong>X</strong> in channel <strong>c</strong> given its previously decoded neighbors.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+These neighbors are defined with respect to the current zoomlevel. In the full image, these 'neighbors' are not directly adjacent (except in zoomlevel 0).
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TT</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>T</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TR</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>LL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>BL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>B</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The following predictors are defined:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Predictor 0</dt>
+<dd>
+<p>(<strong>T</strong> + <strong>B</strong>)&gt;&gt;1</p>
+</dd>
+<dt class="hdlist1">Predictor 1</dt>
+<dd>
+<p>The median of the following three values:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>(<strong>T</strong> + <strong>B</strong>)&gt;&gt;1</p>
+</li>
+<li>
+<p><strong>L</strong> + <strong>T</strong> - <strong>TL</strong></p>
+</li>
+<li>
+<p><strong>L</strong> + <strong>B</strong> - <strong>BL</strong></p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Predictor 2</dt>
+<dd>
+<p>The median of <strong>T</strong>, <strong>B</strong> and <strong>L</strong></p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Border conditions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If <strong>X</strong> is at column 0 (so it has no left neighbor <strong>L</strong>), then we set <strong>L</strong> = <strong>TL</strong> = <strong>BL</strong> = <strong>T</strong></p>
+</li>
+<li>
+<p>If <strong>X</strong> is at the rightmost column, then we set <strong>TR</strong> = <strong>T</strong>.</p>
+</li>
+<li>
+<p>If <strong>X</strong> is at the last row, then <strong>BL</strong> = <strong>B</strong> = <strong>L</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_vertical_zoomlevel_odd_numbered">Vertical zoomlevel (odd-numbered)</h6>
+<div class="paragraph">
+<p>Assume we have to predict pixel <strong>X</strong> in channel <strong>c</strong> given its previously decoded neighbors.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TT</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>T</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TR</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>LL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>R</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>BL</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The following predictors are defined:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Predictor 0</dt>
+<dd>
+<p>(<strong>L</strong> + <strong>R</strong>)&gt;&gt;1</p>
+</dd>
+<dt class="hdlist1">Predictor 1</dt>
+<dd>
+<p>The median of the following three values:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>(<strong>L</strong> + <strong>R</strong>)&gt;&gt;1</p>
+</li>
+<li>
+<p><strong>L</strong> + <strong>T</strong> - <strong>TL</strong></p>
+</li>
+<li>
+<p><strong>R</strong> + <strong>T</strong> - <strong>TR</strong></p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Predictor 2</dt>
+<dd>
+<p>The median of <strong>T</strong>, <strong>L</strong> and <strong>R</strong></p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Border conditions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If <strong>X</strong> is at row 0 (so it has no top neighbor <strong>T</strong>), then we set <strong>T</strong> = <strong>TL</strong> = <strong>TR</strong> = <strong>L</strong></p>
+</li>
+<li>
+<p>If <strong>X</strong> is at the rightmost column, then we set <strong>TR</strong> = <strong>R</strong> = <strong>T</strong>.</p>
+</li>
+<li>
+<p>If <strong>X</strong> is at the last row, then <strong>BL</strong> = <strong>L</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -2239,7 +2631,7 @@ as specified above. The range of each property is maintained during tree travers
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-12-08 12:03:55 CET
+Last updated 2016-12-09 11:16:49 CET
 </div>
 </div>
 </body>
