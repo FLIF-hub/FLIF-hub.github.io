@@ -555,6 +555,8 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_non_interlaced_method">Non-Interlaced method</a></li>
 <li><a href="#_interlaced_method">Interlaced method</a></li>
 <li><a href="#_pixel_encoding">Pixel encoding</a></li>
+<li><a href="#_pixel_predictors">Pixel predictors</a></li>
+<li><a href="#_maniac_properties">MANIAC properties</a></li>
 <li><a href="#_maniac_tree_encoding">MANIAC tree encoding</a></li>
 <li><a href="#_checksum">Checksum</a></li>
 </ul>
@@ -606,7 +608,20 @@ In terms of compression, FLIF usually outperforms other lossless compression for
 <h2 id="_notational_conventions">Notational conventions</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We use '/' to denote integer division.</p>
+<p>We use '/' to denote integer division (rounding towards zero) and '&gt;&gt;' to denote arithmetic right shift. This corresponds to the usual operator semantics in e.g. the C programming language.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+&gt;&gt;1 denotes arithmetic right shift by one, which corresponds to dividing by two <strong>rounding down</strong>.
+For positive integers this is the same as /2, but for negative integers it is not, e.g. -1 / 2 = 0 while -1 &gt;&gt; 1 = -1.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -808,6 +823,40 @@ uni_int(<em>b</em>) denotes an integer of <em>b</em> bits, i.e. it&#8217;s a syn
 </div>
 <div class="paragraph">
 <p>nz_int_<strong>CONTEXT</strong>(<em>min</em>,<em>max</em>) denotes an integer in the interval <em>min</em>..<em>max</em> (inclusive), encoded using Near-zero symbol coding (see below) and a 24-bit RAC, where the chance table is given by <strong>CONTEXT</strong>. This encoding is context-adaptive, i.e. the chance table gets updated when encoding or decoding a number. Numbers are encoded using a zero-sign-exponent-mantissa representation, which favors distributions in which near-zero values have a higher chance (hence the name).</p>
+</div>
+<div class="paragraph">
+<p>gnz_int_<strong>CONTEXT</strong>(<em>min</em>,<em>max</em>) denotes a simple generalization of Near-zero symbol coding that can be used in case the interval does not necessarily include zero. It is defined as follows:</p>
+</div>
+<div class="paragraph">
+<p>gnz_int_<strong>CONTEXT</strong>(<em>min</em>,<em>max</em>) =</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+nz_int_<strong>CONTEXT</strong>(0, <em>max</em> - <em>min</em>) + <em>min</em> 
+</td>
+<td class="hdlist2">
+<p>if <em>min</em> &gt; 0</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+nz_int_<strong>CONTEXT</strong>(<em>min</em> - <em>max</em>, 0) + <em>max</em> 
+</td>
+<td class="hdlist2">
+<p>if <em>max</em> &lt; 0</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+nz_int_<strong>CONTEXT</strong>(<em>min</em>,<em>max</em>) 
+</td>
+<td class="hdlist2">
+<p>otherwise</p>
+</td>
+</tr>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_range_encoder">Range encoder</h3>
@@ -1448,19 +1497,6 @@ It is not allowed to be used if <strong>nb_channels</strong> = 1.</p>
 </tr>
 </tbody>
 </table>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-&gt;&gt;1 denotes arithmetic right shift, which corresponds to dividing by two <strong>rounding down</strong>.
-For positive integers this is the same as /2, but for negative integers it is not, e.g. -1 / 2 = 0 while -1 &gt;&gt; 1 = -1.
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>Luma (Y) corresponds to roughly 50% green, 25% red, 25% blue. Chroma orange (Co) is positive for colors near orange (red, orange, yellow),
 and negative for colors near blue. Chroma green (Cg) is positive for colors near green and negative for colors near purple.</p>
@@ -1725,25 +1761,25 @@ it can e.g. be used to transform RGB to G (R-G) (B-G).</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>0</sub></em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(0)</strong></sub></em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(0))</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>orig_range(p(0))</strong></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>1</sub></em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(1)</strong></sub></em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(1))</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>orig_range(p(1))</strong></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>2</sub></em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(2)</strong></sub></em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(2))</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>orig_range(p(2))</strong></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>3</sub></em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(3)</strong></sub></em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(3))</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>orig_range(p(3))</strong></p></td>
 </tr>
 </tbody>
 </table>
@@ -1770,25 +1806,25 @@ it can e.g. be used to transform RGB to G (R-G) (B-G).</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>0</sub></em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(0)</strong></sub></em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(0))</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>orig_range(p(0))</strong></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>1</sub></em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(1)</strong></sub></em>-<em>v<sub><strong>p(0)</strong></sub></em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(1)).min</strong>-<strong>range(p(0)).max</strong> to <strong>range(p(1)).max</strong>-<strong>range(p(0)).min</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>orig_range(p(1)).min</strong>-<strong>orig_range(p(0)).max</strong> to <strong>orig_range(p(1)).max</strong>-<strong>orig_range(p(0)).min</strong></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>2</sub></em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(2)</strong></sub></em>-<em>v<sub><strong>p(0)</strong></sub></em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(p(2)).min</strong>-<strong>range(p(0)).max</strong> to <strong>range(p(2)).max</strong>-<strong>range(p(0)).min</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>orig_range(p(2)).min</strong>-<strong>orig_range(p(0)).max</strong> to <strong>orig_range(p(2)).max</strong>-<strong>orig_range(p(0)).min</strong></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub>3</sub></em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>v<sub><strong>p(3)</strong></sub></em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(perm(3))</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>orig_range(perm(3))</strong></p></td>
 </tr>
 </tbody>
 </table>
@@ -1843,6 +1879,242 @@ it can e.g. be used to transform RGB to G (R-G) (B-G).</p>
 </div>
 <div class="sect2">
 <h3 id="_transformation_7_colorbuckets">Transformation 7: ColorBuckets</h3>
+<div class="paragraph">
+<p>The ColorBuckets transformation is an alternative to the Palette transformations; it is useful for sparse-color images, especially if the number of colors is relatively small but still too large for effective palette encoding.</p>
+</div>
+<div class="paragraph">
+<p>Unlike the Palette transformations, ColorBuckets does not modify the actual pixel values. As a result, the reverse transformation is trivial: nothing has to be done. However, the transformation does change the <strong>crange</strong> and the <strong>snap</strong> functions. By reducing the range of valid pixel values (sometimes drastically), compression improves.</p>
+</div>
+<div class="paragraph">
+<p>A 'Color Bucket' is a (possibly empty) set of pixel values. For channel 0, there is a single Color Bucket <strong>b<sub>0</sub></strong>. For channel 1, there is one Color Bucket for each pixel value in <strong>orig_range(0)</strong>; we&#8217;ll denote these Color Buckets with <strong>b<sub>1</sub>(v<sub>0</sub>)</strong>. For channel 2, there is one Color Bucket for each combination of values (<strong>v<sub>0</sub></strong>,<strong>Q(v<sub>1</sub>)</strong>) where <strong>v<sub>0</sub></strong> is in <strong>orig_range(0)</strong>, <strong>v<sub>1</sub></strong> is in <strong>orig_range(1)</strong>, and the quantization function <strong>Q</strong> maps <strong>x</strong> to (<strong>x</strong> - <strong>orig_range(1).min</strong>) / 4. Finally, for channel 3, there is a single Color Bucket <strong>b<sub>3</sub></strong>.</p>
+</div>
+<div class="paragraph">
+<p>The new ranges are identical to the original ranges: <strong>new_range(c)</strong> = <strong>orig_range(c)</strong>.</p>
+</div>
+<div class="paragraph">
+<p>The new <em>conditional</em> ranges are given by the minimum and maximum of the corresponding Color Buckets:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>new_crange(0)</strong> = min(<strong>b<sub>0</sub></strong>) .. max(<strong>b<sub>0</sub></strong>)</p>
+</li>
+<li>
+<p><strong>new_crange(1,v<sub>0</sub>)</strong> = min(<strong>b<sub>1</sub>(v<sub>0</sub>)</strong>) .. max(<strong>b<sub>1</sub>(v<sub>0</sub>)</strong>)</p>
+</li>
+<li>
+<p><strong>new_crange(2,v<sub>0</sub>,v<sub>1</sub>)</strong> = min(<strong>b<sub>2</sub>(v<sub>0</sub>,Q(v<sub>1</sub>)</strong>) .. max(<strong>b<sub>2</sub>(v<sub>0</sub>,Q(v<sub>1</sub>)</strong>)</p>
+</li>
+<li>
+<p><strong>new_crange(3)</strong> = min(<strong>b<sub>3</sub></strong>) .. max(<strong>b<sub>3</sub></strong>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The new <strong>snap</strong> function returns the value in the corresponding Color Bucket that is <em>closest</em> to the input value;
+if there are two such values, it returns the lowest one. For example, if Color Bucket <strong>b<sub>1</sub>(20)</strong> is the set {-1,3,4,6,8},
+then <strong>new_snap(1,20,x)</strong> returns -1 for <strong>x</strong>=-100, 4 for <strong>x</strong>=5, 6 for <strong>x</strong>=6, and 8 for <strong>x</strong>=100.</p>
+</div>
+<div class="paragraph">
+<p>The ColorBuckets transformation is not allowed in the following circumstances:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Palette or PaletteAlpha is used, or in general, both channel 0 and 2 contain only zeroes: <strong>orig_range(0)</strong> = <strong>orig_range(2)</strong> = 0 .. 0</p>
+</li>
+<li>
+<p>The image is a grayscale image</p>
+</li>
+<li>
+<p>Channel 1 is trivial: <strong>orig_range(1)</strong> is a singleton</p>
+</li>
+<li>
+<p>Channel 0, 1 or 2 requires more than 10 bits: <strong>orig_range(c).max</strong> - <strong>orig_range(c).min</strong> &gt; 1023</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To encode the Color Buckets, (generalized) near-zero symbol coding is used with 6 different contexts, which we will call A,B,C,D,E, and F.  The encoding is quite complicated.</p>
+</div>
+<div class="paragraph">
+<p>To decode, all Color Buckets are initialized to empty sets.</p>
+</div>
+<div class="paragraph">
+<p>First <strong>b<sub>0</sub></strong> is encoded:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Condition</th>
+<th class="tableblock halign-left valign-top">Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nz_int_A(0,1) = 1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean: <strong>nonempty</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_B(<strong>orig_range(0).min</strong>, <strong>orig_range(0).max</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>min</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_C(<strong>min</strong>, <strong>orig_range(0).max</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>max</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">if <strong>max</strong> - <strong>min</strong> &lt; 2, then <strong>b<sub>0</sub></strong> = { <strong>min</strong>, <strong>max</strong> }</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nz_int_D(0,1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>discrete</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>max</strong> - <strong>min</strong> &gt; 1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">if <strong>discrete</strong> = 0, then <strong>b<sub>0</sub></strong> = <strong>min</strong> .. <strong>max</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_E(2, min(255, <strong>max</strong> - <strong>min</strong>))</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>n</strong> = size of <strong>b<sub>0</sub></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>discrete</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>b<sub>0</sub>[0]</strong> = <strong>min</strong>, <strong>b<sub>0</sub>[n-1]</strong> = <strong>max</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_F(<strong>b<sub>0</sub>[<em>i</em>-1]</strong>+1, <strong>max</strong> + 1 + <strong><em>i</em></strong> - <strong>n</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>b<sub>0</sub>[<em>i</em>]</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>discrete</strong>, repeat: <strong><em>i</em></strong> from 1 to <strong>n</strong>-2</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Next, for all values <strong>v<sub>0</sub></strong> in <strong>b<sub>0</sub></strong>, Color Bucket <strong>b<sub>1</sub>(v<sub>0</sub>)</strong> is encoded:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Condition</th>
+<th class="tableblock halign-left valign-top">Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nz_int_A(0,1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean: <strong>nonempty</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">if false, <strong>b<sub>1</sub>(v<sub>0</sub>)</strong> is the empty set</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_B(<strong>orig_crange(1,v<sub>0</sub>).min</strong>, <strong>orig_crange(1,v<sub>0</sub>).max</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>min</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>nonempty</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_C(<strong>min</strong>, <strong>orig_range(1,v<sub>0</sub>).max</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>max</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>nonempty</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">if <strong>max</strong> - <strong>min</strong> &lt; 2, then <strong>b<sub>1</sub>(v<sub>0</sub>)</strong> = { <strong>min</strong>, <strong>max</strong> }</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nz_int_D(0,1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>discrete</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>max</strong> - <strong>min</strong> &gt; 1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">if <strong>discrete</strong> = 0, then <strong>b<sub>1</sub>(v<sub>0</sub>)</strong> = <strong>min</strong> .. <strong>max</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_E(2, min(510, <strong>max</strong> - <strong>min</strong>))</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>n</strong> = size of <strong>b<sub>1</sub>(v<sub>0</sub>)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>discrete</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>b<sub>1</sub>(v<sub>0</sub>)[0]</strong> = <strong>min</strong>, <strong>b<sub>1</sub>(v<sub>0</sub>)[n-1]</strong> = <strong>max</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_F(<strong>b<sub>1</sub>(v<sub>0</sub>)[<em>i</em>-1]</strong>+1, <strong>max</strong> + 1 + <strong><em>i</em></strong> - <strong>n</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>b<sub>1</sub>(v<sub>0</sub>)[<em>i</em>]</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>discrete</strong>, repeat: <strong><em>i</em></strong> from 1 to <strong>n</strong>-2</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Next, for all values <strong>v<sub>0</sub></strong> in <strong>b<sub>0</sub></strong>, for all values <strong>qv<sub>1</sub></strong> from 0 to (<strong>orig_range(1).max</strong> - <strong>orig_range(1).min</strong>) / 4, Color Bucket <strong>b<sub>2</sub>(v<sub>0</sub>,qv<sub>1</sub>)</strong> is encoded if for some <em>k</em> in 0..3, it is the case that <strong>v<sub>1</sub></strong> = <strong>qv<sub>1</sub></strong> * 4 + <strong>orig_range(1).min</strong> + <em>k</em> is in the set <strong>b<sub>1</sub>(v<sub>0</sub>)</strong>:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Condition</th>
+<th class="tableblock halign-left valign-top">Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nz_int_A(0,1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean: <strong>nonempty</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">if false, remove <strong>v<sub>1</sub></strong> from <strong>b<sub>1</sub>(v<sub>0</sub>)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_B(min<sub>k=0..3</sub>(<strong>orig_crange(2,v<sub>0</sub>,v<sub>1</sub> + k).min</strong>), max<sub>k=0..3</sub>(<strong>orig_crange(2,v<sub>0</sub>,v<sub>1</sub> + k).max</strong>))</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>min</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>nonempty</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_C(<strong>min</strong>, max<sub>k=0..3</sub>(<strong>orig_crange(2,v<sub>0</sub>,v<sub>1</sub> + k).max</strong>))</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>max</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>nonempty</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">if <strong>max</strong> - <strong>min</strong> &lt; 2, then <strong>b<sub>2</sub>(v<sub>0</sub>,qv<sub>1</sub>)</strong> = { <strong>min</strong>, <strong>max</strong> }</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nz_int_D(0,1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>discrete</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>max</strong> - <strong>min</strong> &gt; 1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">if <strong>discrete</strong> = 0, then <strong>b<sub>2</sub>(v<sub>0</sub>,qv<sub>1</sub>)</strong> = <strong>min</strong> .. <strong>max</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_E(2, min(5, <strong>max</strong> - <strong>min</strong>))</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>n</strong> = size of <strong>b<sub>2</sub>(v<sub>0</sub>,qv<sub>1</sub>)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>discrete</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>b<sub>2</sub>(v<sub>0</sub>,qv<sub>1</sub>)[0]</strong> = <strong>min</strong>, <strong>b<sub>2</sub>(v<sub>0</sub>,qv<sub>1</sub>)[n-1]</strong> = <strong>max</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gnz_int_F(<strong>b<sub>2</sub>(v<sub>0</sub>,qv<sub>1</sub>)[<em>i</em>-1]</strong>+1, <strong>max</strong> + 1 + <strong><em>i</em></strong> - <strong>n</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>b<sub>2</sub>(v<sub>0</sub>,qv<sub>1</sub>)[<em>i</em>]</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>discrete</strong>, repeat: <strong><em>i</em></strong> from 1 to <strong>n</strong>-2</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Finally, if there is an Alpha channel (i.e. <strong>nb_channels</strong> &gt; 3), then <strong>b<sub>3</sub></strong> is encoded in exactly the same
+way as <strong>b<sub>0</sub></strong>.</p>
+</div>
 <h3 id="_transformation_8_reserved_unused" class="discrete">Transformation 8: reserved (unused)</h3>
 <h3 id="_transformation_9_reserved_unused" class="discrete">Transformation 9: reserved (unused)</h3>
 </div>
@@ -1902,6 +2174,9 @@ combination of properties simply does not occur in the source image.</p>
 <div class="sect1">
 <h2 id="_part_4_pixel_data">Part 4: pixel data</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>In this final part of the FLIF bitstream, the actual pixel values are encoded. There are two methods (or modes) of pixel encoding: non-interlaced and interlaced. The main header indicates which method is used (see Part 1 above).</p>
+</div>
 <div class="sect2">
 <h3 id="_non_interlaced_method">Non-Interlaced method</h3>
 <div class="paragraph">
@@ -2209,7 +2484,7 @@ In interlaced mode, progressive decoding will give you a blurry / low resolution
 <div class="ulist">
 <ul>
 <li>
-<p>If needed, <em>guess</em> is adjusted to be in this range</p>
+<p><em>guess</em> is adjusted to be a valid value in this range using <strong>snap(c,&#8230;&#8203;)</strong></p>
 </li>
 </ul>
 </div>
@@ -2266,17 +2541,21 @@ As an optimization, it is safe to simply skip pixels from a constant channel, th
 </table>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_pixel_predictors">Pixel predictors</h3>
+<div class="paragraph">
+<p>The different pixel predictors are described below. In each case, the actual predicted value is the value returned by the <strong>snap</strong> function. Usually the <strong>snap</strong> function will simply return its input value, but not always. Noteworthy exceptions are Predictor 1 of Interlaced mode, which as defined below could even be outside the channel range <strong>range</strong>, and any predictor in combination with the ColorBuckets transformation, which can have a nontrivial <strong>snap</strong> function.</p>
+</div>
 <div class="sect3">
-<h4 id="_pixel_predictors">Pixel predictors</h4>
-<div class="sect4">
-<h5 id="_non_interlaced_mode">Non-interlaced mode</h5>
+<h4 id="_non_interlaced_mode">Non-interlaced mode</h4>
 <div class="paragraph">
 <p>Assume we have to predict pixel <strong>X</strong> in channel <strong>c</strong> given its previously decoded neighbors:</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all">
 <colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
+<col>
+<col>
 </colgroup>
 <tbody>
 <tr>
@@ -2322,10 +2601,13 @@ As an optimization, it is safe to simply skip pixels from a constant channel, th
 </ul>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_interlaced_mode">Interlaced mode</h4>
+<div class="paragraph">
+<p>In interlaced mode, there are three different predictors. Moreover, the predictors are slightly different in even-numbered zoomlevels compared to odd-numbered zoomlevels, since slightly different neighboring pixels are available (already decoded) : in horizontal zoomlevels the pixel <em>below</em> the current pixel is already known (since it is part of the previously decoded zoomlevel), while in vertical zoomlevels the pixel <em>to the right</em> of the current pixel is already known.</p>
+</div>
 <div class="sect4">
-<h5 id="_interlaced_mode">Interlaced mode</h5>
-<div class="sect5">
-<h6 id="_horizontal_zoomlevel_even_numbered">Horizontal zoomlevel (even-numbered)</h6>
+<h5 id="_horizontal_zoomlevel_even_numbered">Horizontal zoomlevel (even-numbered)</h5>
 <div class="paragraph">
 <p>Assume we have to predict pixel <strong>X</strong> in channel <strong>c</strong> given its previously decoded neighbors.</p>
 </div>
@@ -2341,12 +2623,12 @@ These neighbors are defined with respect to the current zoomlevel. In the full i
 </tr>
 </table>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all">
 <colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
+<col>
+<col>
+<col>
+<col>
 </colgroup>
 <tbody>
 <tr>
@@ -2371,7 +2653,7 @@ These neighbors are defined with respect to the current zoomlevel. In the full i
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>BL</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>B</strong></p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>BR</strong></p></td>
 </tr>
 </tbody>
 </table>
@@ -2421,20 +2703,23 @@ These neighbors are defined with respect to the current zoomlevel. In the full i
 <li>
 <p>If <strong>X</strong> is at the last row, then <strong>BL</strong> = <strong>B</strong> = <strong>L</strong>.</p>
 </li>
+<li>
+<p>If <strong>X</strong> is at the rightmost column or last row, then <strong>BR</strong> = <strong>B</strong>.</p>
+</li>
 </ul>
 </div>
 </div>
-<div class="sect5">
-<h6 id="_vertical_zoomlevel_odd_numbered">Vertical zoomlevel (odd-numbered)</h6>
+<div class="sect4">
+<h5 id="_vertical_zoomlevel_odd_numbered">Vertical zoomlevel (odd-numbered)</h5>
 <div class="paragraph">
 <p>Assume we have to predict pixel <strong>X</strong> in channel <strong>c</strong> given its previously decoded neighbors.</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all">
 <colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
+<col>
+<col>
+<col>
+<col>
 </colgroup>
 <tbody>
 <tr>
@@ -2459,7 +2744,7 @@ These neighbors are defined with respect to the current zoomlevel. In the full i
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>BL</strong></p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>BR</strong></p></td>
 </tr>
 </tbody>
 </table>
@@ -2468,11 +2753,11 @@ These neighbors are defined with respect to the current zoomlevel. In the full i
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Predictor 0</dt>
+<dt class="hdlist1">Predictor 0 (<strong>P<sub>0</sub></strong>)</dt>
 <dd>
 <p>(<strong>L</strong> + <strong>R</strong>)&gt;&gt;1</p>
 </dd>
-<dt class="hdlist1">Predictor 1</dt>
+<dt class="hdlist1">Predictor 1 (<strong>P<sub>1</sub></strong>)</dt>
 <dd>
 <p>The median of the following three values:</p>
 <div class="ulist">
@@ -2489,7 +2774,7 @@ These neighbors are defined with respect to the current zoomlevel. In the full i
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">Predictor 2</dt>
+<dt class="hdlist1">Predictor 2 (<strong>P<sub>2</sub></strong>)</dt>
 <dd>
 <p>The median of <strong>T</strong>, <strong>L</strong> and <strong>R</strong></p>
 </dd>
@@ -2509,20 +2794,385 @@ These neighbors are defined with respect to the current zoomlevel. In the full i
 <li>
 <p>If <strong>X</strong> is at the last row, then <strong>BL</strong> = <strong>L</strong>.</p>
 </li>
+<li>
+<p>If <strong>X</strong> is at the rightmost column or last row, then <strong>BR</strong> = <strong>R</strong>.</p>
+</li>
 </ul>
 </div>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_properties">Properties</h4>
-<div class="sect4">
-<h5 id="_non_interlaced_mode_2">Non-interlaced mode</h5>
-
+<div class="sect2">
+<h3 id="_maniac_properties">MANIAC properties</h3>
+<div class="paragraph">
+<p>The MANIAC property vector <em>pvec</em> which is used to determine the context (i.e. the MANIAC tree leaf node) is constructed
+in the following way. Assume the pixel currently being decoded is pixel <strong>X</strong> in channel number <strong>c</strong> and the pixel values of previously decoded neighboring pixels (of the same channel) are named as in the diagram below&#8201;&#8212;&#8201;it depends on the interlacing mode and zoomlevel which of these are known at decode time.</p>
 </div>
-<div class="sect4">
-<h5 id="_interlaced_mode_2">Interlaced mode</h5>
-
+<table class="tableblock frame-all grid-all">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TT</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>T</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TR</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>LL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>R</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>BL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>B</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Moreover, we use <strong>X<sub>pc</sub></strong> to denote the pixel value at the position of <strong>X</strong> in a previously decoded channel <strong>pc</strong>,
+and <strong>P</strong> to denote the predicted value for <strong>X</strong> (as described above).</p>
+</div>
+<div class="paragraph">
+<p>Finally, we define the range <strong>maxdiff(c)</strong> as the range of a difference between two pixel values in channel <strong>c</strong>, that is: <strong>maxdiff(c).min</strong> = <strong>range(c).min</strong> - <strong>range(c).max</strong> and <strong>maxdiff(c).max</strong> = <strong>range(0).max</strong> - <strong>range(c).min</strong>.</p>
+</div>
+<div class="sect3">
+<h4 id="_non_interlaced_mode_2">Non-interlaced mode</h4>
+<div class="paragraph">
+<p>In non-interlaced mode, the following MANIAC properties are defined for a pixel in channel <strong>c</strong>:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Condition</th>
+<th class="tableblock halign-left valign-top">Property range (<strong>prange</strong>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X<sub>0</sub></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Luma / channel 0 value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &lt; <strong>c</strong> &lt; 3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(0)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X<sub>1</sub></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Co / channel 1 value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 &lt; <strong>c</strong> &lt; 3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(1)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X<sub>3</sub></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alpha value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>c</strong> &lt; 3 &lt; <strong>nb_channels</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(3)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>P</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Predicted value <strong>snap(c,&#8230;&#8203;,</strong>median(<strong>L</strong>+<strong>T</strong>-<strong>TL</strong>,<strong>L</strong>,<strong>T</strong>)<strong>)</strong></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>M<sub>ni</sub></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Median-index (see below)</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..2</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong> - <strong>TL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Left - Topleft</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TL</strong> - <strong>T</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Topleft - Top</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>T</strong> - <strong>TR</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Top - Topright</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TT</strong> - <strong>T</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Toptop - Top</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>LL</strong> - <strong>L</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Leftleft - Left</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For images <em>without</em> an alpha channel, channel 0 has 7 properties (numbered 0 to 6), channel 1 has 8 properties, and channel 2 has 9 properties. For images with an alpha channel, channel 0 has 8 properties, channel 1 has 9 properties, channel 2 has 10 properties, and channel 3 has 7 properties. In animations with FrameLookback, channel 4 has 7 properties.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Border conditions: if in the last five properties, which are differences between two neighboring pixels, one of those pixels does not exist, the property is defined to be zero.</p>
+</div>
+<div class="paragraph">
+<p>The median-index <strong>M<sub>ni</sub></strong> indicates which of the three input values for the median predictor became the predictor; more precisely, it is defined as follows:</p>
+</div>
+<div class="paragraph">
+<p><strong>M<sub>ni</sub></strong> =</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+0 
+</td>
+<td class="hdlist2">
+<p>if <strong>P</strong> = <strong>L</strong>+<strong>T</strong>-<strong>TL</strong></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+1 
+</td>
+<td class="hdlist2">
+<p>if <strong>P</strong> = <strong>L</strong>  (and the above condition does not hold)</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+2 
+</td>
+<td class="hdlist2">
+<p>if <strong>P</strong> = <strong>T</strong>  (and neither of the above conditions hold)</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+0 
+</td>
+<td class="hdlist2">
+<p>otherwise</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_interlaced_mode_2">Interlaced mode</h4>
+<div class="paragraph">
+<p>In interlaced mode, the following MANIAC properties are defined for a pixel in zoomlevel <strong>z</strong> of channel <strong>c</strong> using predictor <strong>p</strong>:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Condition</th>
+<th class="tableblock halign-left valign-top">Property range (<strong>prange</strong>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X<sub>0</sub></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Luma / channel 0 value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &lt; <strong>c</strong> &lt; 3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(0)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X<sub>1</sub></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Co / channel 1 value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 &lt; <strong>c</strong> &lt; 3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(1)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X<sub>3</sub></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alpha value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>c</strong> &lt; 3 &lt; <strong>nb_channels</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(3)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>M<sub>i</sub></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Median-index (see below)</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..2</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X<sub>0</sub></strong> - (<strong>T<sub>0</sub></strong>+<strong>B<sub>0</sub></strong>)&gt;&gt;1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Luma 'prediction miss'</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &lt; <strong>c</strong> &lt; 3 and <strong>z</strong> is even</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(0)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>X<sub>0</sub></strong> - (<strong>L<sub>0</sub></strong>+<strong>R<sub>0</sub></strong>)&gt;&gt;1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Luma 'prediction miss'</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &lt; <strong>c</strong> &lt; 3 and <strong>z</strong> is odd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(0)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>T</strong> - <strong>B</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Top - Bottom</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>z</strong> is even</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>T</strong> - (<strong>TL</strong> + <strong>TR</strong>)&gt;&gt;1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Top 'prediction miss'</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>z</strong> is even</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong> - (<strong>BL</strong> + <strong>TL</strong>)&gt;&gt;1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Left 'prediction miss'</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>z</strong> is even</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>B</strong> - (<strong>BL</strong> + <strong>BR</strong>)&gt;&gt;1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bottom 'prediction miss'</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>z</strong> is even</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong> - <strong>R</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Left - Right</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>z</strong> is odd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong> - (<strong>BL</strong> + <strong>TL</strong>)&gt;&gt;1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Left 'prediction miss'</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>z</strong> is odd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>T</strong> - (<strong>TL</strong> + <strong>TR</strong>)&gt;&gt;1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Top 'prediction miss'</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>z</strong> is odd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>R</strong> - (<strong>BR</strong> + <strong>TR</strong>)&gt;&gt;1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Right 'prediction miss'</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>z</strong> is odd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>P<sub>p</sub></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Predicted value (see above)</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>range(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TT</strong> - <strong>T</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Toptop - Top</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>c</strong> is not 2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>LL</strong> - <strong>L</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Leftleft - Left</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>c</strong> is not 2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>maxdiff(c)</strong></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For images <em>without</em> an alpha channel, channel 0 has 8 properties (numbered 0 to 7), channel 1 has 10 properties, and channel 2 has 9 properties. For images with an alpha channel, channel 0 has 9 properties, channel 1 has 11 properties, channel 2 has 10 properties, and channel 3 has 8 properties. In animations with FrameLookback, channel 4 has 8 properties.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Border conditions:
+If <strong>TL</strong>, <strong>T</strong>, <strong>TR</strong>, <strong>L</strong>, <strong>BL</strong>, <strong>B</strong>, <strong>BR</strong> or <strong>R</strong> are missing, they are defined as described in the interlaced pixel predictor definition above. If <strong>TT</strong> or <strong>LL</strong> are missing, the property they occur in gets value zero.
+If <strong>B<sub>0</sub></strong> is missing, <strong>B<sub>0</sub></strong> = <strong>T<sub>0</sub></strong>; if <strong>R<sub>0</sub></strong> is missing, <strong>R<sub>0</sub></strong> = <strong>L<sub>0</sub></strong>.</p>
+</div>
+<div class="paragraph">
+<p>The median-index <strong>M<sub>i</sub></strong> indicates which of the three input values for the median in Predictor 1 is the median; more precisely, it is defined as follows:</p>
+</div>
+<div class="paragraph">
+<p><strong>M<sub>i</sub></strong> =</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+0 
+</td>
+<td class="hdlist2">
+<p>if <strong>z</strong> is even and <strong>P<sub>1</sub></strong> = (<strong>T</strong> + <strong>B</strong>)&gt;&gt;1</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+0 
+</td>
+<td class="hdlist2">
+<p>if <strong>z</strong> is odd and <strong>P<sub>1</sub></strong> = (<strong>L</strong> + <strong>R</strong>)&gt;&gt;1</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+1 
+</td>
+<td class="hdlist2">
+<p>if <strong>P<sub>1</sub></strong> = <strong>L</strong> + <strong>T</strong> - <strong>TR</strong>  (and the above conditions do not hold)</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+2 
+</td>
+<td class="hdlist2">
+<p>otherwise</p>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -2589,10 +3239,7 @@ as specified above. The range of each property is maintained during tree travers
 <div class="sect2">
 <h3 id="_checksum">Checksum</h3>
 <div class="paragraph">
-<p>At the very end of the bitstream, there is an optional checksum to verify the integrity of the file.</p>
-</div>
-<div class="paragraph">
-<p>TODO: describe how the checksum is computed</p>
+<p>At the very end of the bitstream, there is an optional 32-bit checksum to verify the integrity of the file.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -2625,13 +3272,69 @@ as specified above. The range of each property is maintained during tree travers
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>This checksum is a standard <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">CRC-32</a>, computed from the original (or decoded) pixel data in the following way:</p>
+</div>
+<div class="paragraph">
+<p>The CRC is initialized to the value (<strong>width</strong> &lt;&lt; 16) + <strong>height</strong>, interpreted as an unsigned 32-bit number.
+Then the pixel values of all channels are processed, in scanline order (top to bottom, left to right), where each value is represented as a little-endian integer in 1, 2 or 4 bytes, depending on the bit depth of the image.
+The following sizes are used:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Channel</th>
+<th class="tableblock halign-left valign-top">All channels use at most 8 bits per pixel</th>
+<th class="tableblock halign-left valign-top">At least one channel uses 9 or more bits per pixel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 byte</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2 bytes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2 bytes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4 bytes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2 bytes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4 bytes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 byte</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2 bytes</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Design rationale: why more bytes for channels 1 and 2?</div>
+<div class="paragraph">
+<p>You might wonder why for the checksum computation, pixels in channels 1 and 2 are represented using a larger bit width than
+strictly necessary. The reason is that while for the RGBA values, a smaller width would suffice, this is not true during
+the encoding or decoding if the YCoCg color transformation is used. The Co and Cg channels (channel 1 and 2) have a larger
+range; a typical implementation would use signed 16-bit values (if the original RGB values are unsigned 8-bit) or signed 32-bit values (if the original RGB values are unsigned 16-bit). For this reason, it is convenient to use a larger buffer for these
+channels, and it is convenient to be able to compute the checksum directly on this larger buffer.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-12-09 11:16:49 CET
+Last updated 2016-12-12 11:07:51 CET
 </div>
 </div>
 </body>
