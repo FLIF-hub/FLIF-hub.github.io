@@ -6,29 +6,51 @@ menu_title: Software
 {% include header.html %}
 
 
-    <h1 id="flif-plugins-applications-tools-and-libraries"><a href="/index.html">FLIF</a> Plugins, Applications, Tools,
-       and Libraries</h1>
+    <h1 id="flif-software"><a href="/index.html">FLIF</a> Software</h1>
 
-    <p>FLIF is still very young, as the format matures we expect support for it to grow in many areas.</p>
+    <p>FLIF is still very young. As the format matures we expect support for it to grow in many areas.
+       On this page, we give an overview of available FLIF plugins, applications, tools,
+       and libraries.</p>
 
     <p><strong>NOTE:</strong> Many items listed below do not have FLIF support yet, we would love for them to though. If you have
        an interest in working on one of these, <a href="http://gitter.im/FLIF-Hub/FLIF">let us know</a>!</p>
 
 
+    <h2 id="reference">Reference implementation</h2>
+
+    <p>The reference implementation of FLIF consists of a command line tool called <code>flif</code> and a shared library called <code>libflif</code>.
+    They are licensed under the LGPLv3+.
+    There is also a decoder-only library called <code>libflif_dec</code>, which is licensed under the more permissive Apache 2.0 license.
+    </p>
+    <ul>
+        <li><strong><a href="https://github.com/FLIF-hub/FLIF">FLIF reference implementation</a></strong> - encoder, decoder (command-line tool)</li>
+    </ul>
+
+
     <h2 id="browsers">Browsers</h2>
 
-    <p>Currently there are no browsers that have native FLIF support. We hope for this to change after the 2016 version is
-       finalized. There is however a javascript based implementation in the works.</p>
+    <p>Currently there are no browsers that have native FLIF support. We hope for this to change at some point,
+        but browser developers are understandably hesitant to support new image formats.
+        There is however a javascript based implementation:</p>
 
     <ul>
         <li><strong><a href="https://uprootlabs.github.io/poly-flif">Poly-FLIF</a></strong> - A Polyfill for browsers that don't
             natively support FLIF.</li>
     </ul>
 
+    <p>If you want to encourage browser developers to add FLIF support, maybe these pointers might help:</p>
+
+    <ul>
+        <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1240692"><strong>Mozilla</strong>: BugZilla Bug 1240692 - (FLIF) Implement support for Free Lossless Image Format (FLIF)</a></li>
+        <li><a href="https://bugs.chromium.org/p/chromium/issues/detail?id=539120"><strong>Chromium</strong>: Issue 539120 – Feature-Request: FLIF-Support</a></li>
+    </ul>
+
 
     <h2 id="graphics-software">Graphics Software</h2>
 
     <ul>
+        <li><strong><a href="http://www.imagemagick.org/">ImageMagick</a></strong> supports FLIF since versions 6.9.4-5 and 7.0.1-7.</li>
+        <li><strong><a href="http://www.sno.phy.queensu.ca/~phil/exiftool/">ExifTool</a></strong> supports FLIF since version 10.31.</li>
         <li><strong>Photoshop</strong> - Not supported natively yet, no FLIF plugins currently exist.</li>
         <li><strong>Krita</strong> - Not supported natively yet, no FLIF plugins currently exist.</li>
         <li><strong>GIMP</strong> - Not supported natively yet, no FLIF plugins currently exist.</li>
@@ -38,18 +60,22 @@ menu_title: Software
     <h2 id="image-viewers">Image Viewers</h2>
 
     <ul>
+        <li><strong><a href="https://github.com/peirick/FlifWICCodec">FLIF Windows Codec</a></strong> - This plugin allows to
+        decode and encode FLIF files in Windows aplications using the Windows Imaging Component (WIC) API. That allows e.g.,
+        to see the files in Windows PhotoViewer and Windows Explorer.
+        (similar project, decode only: <a href="https://github.com/fherzog2/flif_windows_plugin">FLIF Windows Plugin</a>)</li>
         <li><strong><a href="https://github.com/spillerrec/qt-flif-plugin">QT FLIF Plugin</a></strong> - A plugin for QT4 and QT5
             (used by KDE).</li>
         <li><strong>viewer</strong> - The FLIF project has a basic viewer.exe application that displays .flif images natively. You
             will need to <a href="https://github.com/FLIF-hub/FLIF#build-instructions">download and build</a> the source code to
             run it. Will run on Windows, OSX, and GNU/Linux.</li>
         <li><strong>IrfanView</strong> - Not supported natively yet, no FLIF plugins currently exist.</li>
-        <li><strong>XnView</strong> - Not supported natively yet, no FLIF plugins currently exist.</li>
+        <li><strong><a href="http://www.xnview.com/">XnView</a></strong> - Supports FLIF since version 2.36</li>
         <li><strong>FastStone Image Viewer</strong> - Not supported natively yet, no FLIF plugins currently exist.</li>
         <li><strong>Windows Picture and Fax Viewer</strong> - Not supported natively yet, no FLIF plugins currently exist.
             Interested in making this? <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ee719883(v=vs.85).aspx">Look
             here</a>.</li>
-        <li><strong>Windows Explorer Thumbnails</strong> - Not supported natively yet, no FLIF plugins currently exist.</li>
+        <li><strong><a href="https://github.com/lehitoskin/ivy">Ivy, the Taggable Image Viewer</a></strong> - An image viewer that supports FLIF via <a href="https://github.com/lehitoskin/riff">riff</a></li>
     </ul>
 
 

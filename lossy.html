@@ -1,0 +1,73 @@
+---
+title: FLIF - Lossy compression
+group: menu
+menu_title: Lossy?
+---
+{% include header.html %}
+
+
+    <h1 id="lossy-flif">Lossy <a href="/index.html">FLIF</a></h1>
+
+    <p>FLIF is a lossless format. Still, if you want to, you can allow the encoder to modify the input image in order to improve compression.
+    Obviously it will only do that if you tell it to, by using the command-line option <code>--lossy [quality]</code>.
+    </p>
+    <h2 id="advantages">Advantages of lossy FLIF</h2>
+    <p>One of the advantages of using a lossless format in a lossy way (as opposed to using a lossy format), is that
+    <a href="https://en.wikipedia.org/wiki/Generation_loss">generation loss</a> is not an issue.
+    Of course the information that is lost, stays lost, but no matter how many times you save a FLIF file,
+    it will not get any additional loss from a decode-encode cycle. This is not the case for e.g. JPEG, where each decode-encode cycle <i>always</i> introduces additional loss.
+    </p>
+            <iframe width="640" height="360" src="https://www.youtube-nocookie.com/embed/_h5gC3EzlJg?rel=0" frameborder="0" allowfullscreen style="max-width:100%">
+                <a href="https://www.youtube.com/watch?v=_h5gC3EzlJg">Generation loss: FLIF vs WebP vs BPG vs JPEG</a>
+            </iframe>
+
+    <p>Lossy FLIF has the same advantages as lossless FLIF: it works well on any kind of image (photographs, webcomics, abstract art, whatever),
+    and it is still <a href="responsive.html">Responsive by design</a>: you can still progressively decode a lossy FLIF or generate a thumbnail from
+    the first part of the file.
+    </p>
+    <table>
+        <tr>
+            <th>Original (lossless)<br>104,585 byte PNG<br>52,848 byte FLIF</th>
+            <th>Lossy FLIF<br>37,207 bytes</th>
+            <th>JPEG (mozjpeg, quality 50)<br>37,379 bytes</th>
+            <th>JPEG (libjpeg, quality 50)<br>37,923 bytes</th>
+        </tr>
+        <tr><td><a href="example-lossy/SMBC-comic.png" class="img"><img src="example-lossy/SMBC-comic-crop.png" alt="SMBC comic, original"/></a></td>
+            <td><a href="example-lossy/SMBC-comic-flif.png" class="img"><img src="example-lossy/SMBC-comic-flif-crop.png" alt="SMBC comic, FLIF"/></a></td>
+            <td><a href="example-lossy/SMBC-comic-mozjpeg.jpg" class="img"><img src="example-lossy/SMBC-comic-mozjpeg-crop.png" alt="SMBC comic, MozJPEG"/></a></td>
+            <td><a href="example-lossy/SMBC-comic.jpg" class="img"><img src="example-lossy/SMBC-comic-jpeg-crop.png" alt="SMBC comic, JPEG"/></a></td>
+        </tr>
+    </table>
+    <h2 id="comparison">Comparison to lossy formats</h2>
+    <p><a href="lossy-artifacts.html">Here is a case study</a> on one image to give you an idea of the kind of artifacts lossy FLIF causes. In our opinion,
+    at low qualities and for photographs, dedicated lossy formats like WebP, JPEG or BPG still produce better results. However, at very high-quality,
+    we think lossy FLIF is a better option. Lossy WebP has obligatory chroma subsampling and YCbCr color transformation, which limits its usefulness
+    at high qualities. JPEG also suffers from the YCbCr transformation, which effectively reduces 24-bit color to 22-bit (with most of the loss in reds and blues).
+    FLIF, being a lossless format, does not have these limitations.
+    </p>
+    <p>
+    Lossy FLIF is competitive with specialized lossy formats like JPEG, JPEG XR, JPEG 2000, and WebP in terms of
+    <a href="https://kornel.ski/dssim">DSSIM</a> (perceptual quality) for a given file size, while it avoids the problem of generation loss
+    and it works well on all kinds of images, also non-photographic ones. Here are some plots to demonstrate this.
+    </p>
+    <p>
+    The best (lowest) DSSIM value shown here is actually lossless (which would be DSSIM=0, which cannot be shown on a logarithmic plot like this so we changed
+    the value to 0.000001).
+    The full quality range is shown for each format. Note that WebP are actually two formats: a lossy format based on VP8, and a (near-)lossless format.
+    </p>
+    <dl>
+        <dt id="photographs">Photographic image</dt>
+        <dd>
+        <a href="img/wikipedia-photo.svg"><img src="img/wikipedia-photo.svg" alt="DSSIM vs bits-per-pixel for a photographic image" onerror="this.src='img/wikipedia-photo.png'; this.onerror=null;"></a>
+        </dd>
+        <dt id="webcomics">Line art (webcomic)</dt>
+        <dd>
+        <a href="img/SMBC-comic.svg"><img src="img/SMBC-comic.svg" alt="DSSIM vs bits-per-pixel for a webcomic" onerror="this.src='img/SMBC-comic.png'; this.onerror=null;"></a>
+        </dd>
+        <dt id="fractals">Abstract image (fractal art)</dt>
+        <dd>
+        <a href="img/fractal-art.svg"><img src="img/fractal-art.svg" alt="DSSIM vs bits-per-pixel for a fractal art image" onerror="this.src='img/fractal-art.png'; this.onerror=null;"></a>
+        </dd>
+    </dl>
+</body>
+</html>

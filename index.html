@@ -33,6 +33,9 @@ group: home
     <strong>then FLIF still beats that by 12%</strong> on a <i>median</i> corpus
     (or 19% on average, including 16-bit images which are not supported by WebP and BPG).</p>
 
+    <h2>Status</h2>
+    <p>The file format has been standardised and versioned. The latest stable version is <strong>FLIF16</strong> and
+        is documented <a href="spec.html">here</a>.</p>
 
     <h2 id="advantages">Advantages</h2>
 
@@ -93,7 +96,7 @@ group: home
         <dd>
             <p>Unlike some other image formats (e.g. BPG and JPEG 2000), FLIF is completely royalty-free and it is not known to be encumbered by software patents.
             At least as far as we know.
-            FLIF is uses <a href="https://en.wikipedia.org/wiki/Arithmetic_coding">arithmetic coding</a>,
+            FLIF uses <a href="https://en.wikipedia.org/wiki/Arithmetic_coding">arithmetic coding</a>,
             just like <a href="https://en.wikipedia.org/wiki/FFV1">FFV1</a> (which inspired FLIF), but as far as we know,
             all patents related to arithmetic coding <a href="https://en.wikipedia.org/wiki/Arithmetic_coding#US_patents">are expired</a>.
             Other than that, we do not think FLIF uses any techniques on which patents are claimed.
@@ -124,10 +127,9 @@ group: home
 
     <h2 id="download">Download</h2>
 
-    <p><strong>WARNING:</strong> FLIF is a work in progress. The format is not finalized yet. Any small or large change in the algorithm will most likely mean that FLIF files encoded with an older version will no longer be correctly decoded by a newer version. Keep this in mind.</p>
-
     <p><a href="https://github.com/FLIF-hub/FLIF">FLIF source code</a></p>
     <p><a href="http://flif.info/UGUI_FLIF">UGUI: FLIF</a> - A GUI for FLIF</p>
+    <p><a href="https://github.com/sveinbjornt/Phew">Phew</a> - FLIF Viewer for OSX</p>
 
 
     <h2 id="features">Features</h2>
@@ -135,16 +137,17 @@ group: home
     <p>FLIF currently has the following features:</p>
     <ul>
         <li>Lossless compression</li>
-        <li>Greyscale, RGB, RGBA</li>
+        <li><a href="lossy.html">Lossy compression</a> (encoder preprocessing option, format itself is lossless so no generation loss)</li>
+        <li>Greyscale, RGB, RGBA (also palette and color-bucket modes)</li>
         <li>Color depth: up to 16 bits per channel (high bit depth)</li>
         <li>Interlaced (default) or non-interlaced</li>
         <li>Interlaced files can be decoded quickly at lower quality/resolution (<a href="responsive.html">&ldquo;Responsive By Design&rdquo;</a>)</li>
         <li><a href="example.html">Progressive decoding</a> of partially downloaded files</li>
         <li><a href="animation.html">Animation support</a></li>
+        <li>Support for embedded ICC color profiles, Exif and XMP metadata</li>
         <li>Rudimentary support to compress camera raw files (RGGB)</li>
-        <li>Rudimentary support for metadata (arbitrary embedded extra data, currently just ignored by the decoder)</li>
         <li>Encoding and decoding speeds are acceptable, but should be improved</li>
-        <li>Fallback web browser support via a JavaScript polyfill decoder (poly-flif)</li>
+        <li>Fallback web browser support via a JavaScript polyfill decoder (<a href="https://uprootlabs.github.io/poly-flif">poly-flif</a>)</li>
     </ul>
 
 
@@ -152,10 +155,9 @@ group: home
 
     <p>FLIF does not yet support the following features:</p>
     <ul>
-        <li>Good support for metadata (EXIF, ICC profiles, XMP, ...)</li>
         <li>Other color spaces (CMYK, YCbCr, ...)</li>
         <li>Tiles (to store huge images with fast cropped viewing)</li>
-        <li>Lossy compression</li>
+        <li>Better lossy compression</li>
         <li>Native web browser support</li>
         <li>Support in popular image tools and viewers</li>
         <li>A highly optimized implementation</li>
@@ -167,6 +169,17 @@ group: home
     <p>FLIF is based on MANIAC compression. MANIAC (Meta-Adaptive Near-zero Integer Arithmetic Coding) is an algorithm for entropy coding developed by Jon Sneyers and Pieter Wuille. It is a variant of <a href="https://en.wikipedia.org/wiki/Context-adaptive_binary_arithmetic_coding">CABAC (context-adaptive binary arithmetic coding)</a>, where instead of using a multi-dimensional array of quantized local image information, the contexts are nodes of decision trees which are dynamically learned at encode time. This means a much more image-specific context model can be used, resulting in better compression.</p>
 
     <p>Moreover, FLIF supports a form of progressive interlacing (essentially a generalization/improvement of PNG&apos;s <a href="https://en.wikipedia.org/wiki/Adam7_algorithm">Adam7 interlacing</a>) which means that any prefix (e.g. partial download) of a compressed file can be used as a reasonable lossy encoding of the entire image. In contrast to other interlacing image formats (e.g. PNG or GIF), interlaced FLIF encoding takes the interlacing into account in the pixel estimation and in the MANIAC context model. As a result, the overhead of interlacing is small, and in some cases (e.g. photographs) interlaced FLIF files are even smaller than non-interlaced ones.</p>
+
+    <p>Many more technical details can be found in the <a href="publications.html">publications</a> section of this website.
+
+
+    <h2 id="sponsors">FLIF sponsors</h2>
+
+    <p>
+    <a href="http://cloudinary.com" class="no-highlight"><img src="http://res.cloudinary.com/cloudinary/image/upload/c_scale,w_150/v1/logo/for_white_bg/cloudinary_logo_for_white_bg.png" align="left" style="padding-right: 1em; padding-bottom: 2em;"></a>
+    FLIF development is currently sponsored by <a href="http://cloudinary.com">Cloudinary</a>, the image back-end for web and mobile developers.
+    Obviously Cloudinary fully supports the FLIF format, both as an input format and an output format.
+    </p>
 
 <script>
   ((window.gitter = {}).chat = {}).options = {
